@@ -13,6 +13,10 @@
 		"typecheck:node": "tsc --noEmit -p tsconfig.node.json --composite false",
 		"typecheck:web": "tsc --noEmit -p tsconfig.web.json --composite false",
 		"typecheck": "npm run typecheck:node && npm run typecheck:web",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"test:ui": "vitest --ui",
+		"test:coverage": "vitest run --coverage",
 		"start": "electron-vite preview",
 		"dev": "electron-vite dev",
 		"build": "npm run typecheck && electron-vite build",
@@ -25,21 +29,22 @@
 	"dependencies": {
 		"@electron-toolkit/preload": "^3.0.2",
 		"@electron-toolkit/utils": "^4.0.0",
-		"electron-updater": "^6.3.9"
+		"electron-updater": "^6.7.3"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.3.11",
 		"@electron-toolkit/tsconfig": "^2.0.0",
-		"@types/node": "^22.19.1",
-		"@types/react": "^19.2.7",
+		"@types/node": "^22.19.7",
+		"@types/react": "^19.2.8",
 		"@types/react-dom": "^19.2.3",
-		"@vitejs/plugin-react": "^5.1.1",
-		"electron": "^39.2.6",
-		"electron-builder": "^26.0.12",
+		"@vitejs/plugin-react": "^5.1.2",
+		"electron": "^39.2.7",
+		"electron-builder": "^26.4.0",
 		"electron-vite": "^5.0.0",
-		"react": "^19.2.1",
-		"react-dom": "^19.2.1",
+		"react": "^19.2.3",
+		"react-dom": "^19.2.3",
 		"typescript": "^5.9.3",
-		"vite": "^7.2.6"
+		"vite": "^7.3.1",
+		"vitest": "^4.0.17"
 	}
 }
