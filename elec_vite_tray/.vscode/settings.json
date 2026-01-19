@@ -1,11 +1,36 @@
 {
-  "[typescript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[javascript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[json]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  }
+	// 文件折叠
+	"explorer.fileNesting.enabled": true,
+	"explorer.fileNesting.expand": false,
+	"explorer.fileNesting.patterns": {
+		"*.ts": "${capture}.js",
+		"*.js": "${capture}.js.map, ${capture}.min.js, ${capture}.d.ts",
+		"*.jsx": "${capture}.js",
+		"*.tsx": "${capture}.ts",
+		"Cargo.toml": "Cargo.lock",
+		"tsconfig.json": "tsconfig.*.json",
+		"package.json": "package-lock.json, yarn.lock, pnpm-lock.yaml, bun.lockb, bun.lock, package.dock.json, pnpm-workspace.yaml, .npmrc, biome.json, auto-imports.d.ts, .gitignore",
+		"vite.config.ts": "vite.config.ts, vitest.config.ts, vitest.setup.ts",
+		"Dockerfile": "Dockerfile.Bear, Dockerfile.origin, Dockerfile.py, Dockerfile.bun, docker.build.sh, docker.run.sh, DOCKER_SQLITE_GUIDE.md, docker-compose.yml, .dockerignore"
+	},
+	// 文件搜索
+	"search.exclude": {
+		"**/ncc": true,
+		"**/winlogs": true,
+		"**/*.js": true,
+		"**/dist": true,
+		"**/cache": true,
+		"**/data": true,
+		"**/chrome9222": true,
+		"**/.node-persist": true,
+		"**/node_modules": true,
+		"**/*.code-search": true,
+		"**/pnpm-lock.yaml": true,
+		"**/bun.lock": true
+	},
+	"biome.enabled": true,
+	"editor.defaultFormatter": "biomejs.biome",
+	"[typescript]": {
+		"editor.defaultFormatter": "biomejs.biome"
+	}
 }
