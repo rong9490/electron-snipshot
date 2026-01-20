@@ -6,27 +6,25 @@
 import { join } from 'node:path'
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import { app, BrowserWindow, shell } from 'electron'
-import icon from '../../resources/icon.png?asset'
 
 // 导入所有模块
 import { EventBus } from './modules/EventBus'
 import { ConfigManager } from './modules/ConfigManager'
 import { StateManager } from './modules/StateManager'
 import { NotificationManager } from './modules/NotificationManager'
-import { TrayManager } from './modules/TrayManager'
 import { IPCHandlers } from './modules/IPCHandlers'
 import { AppEvents } from './types'
 
 // 全局变量
 let mainWindow: BrowserWindow | null = null
 let isQuitting = false
+let windowCount = 0 // 窗口计数器
 
 // 模块实例
 let eventBus: EventBus | null = null
 let configManager: ConfigManager | null = null
 let stateManager: StateManager | null = null
 let notificationManager: NotificationManager | null = null
-let trayManager: TrayManager | null = null
 let ipcHandlers: IPCHandlers | null = null
 
 /**
@@ -39,7 +37,6 @@ function createWindow(): void {
 		height: 670,
 		show: false,
 		autoHideMenuBar: true,
-		...(process.platform === 'linux' ? { icon } : {}),
 		webPreferences: {
 			preload: join(__dirname, '../preload/index.js'),
 			sandbox: false
@@ -50,14 +47,27 @@ function createWindow(): void {
 		mainWindow?.show()
 	})
 
-	mainWindow.on('close', (event) => {
-		// 阻止窗口关闭，改为隐藏到托盘
-		if (!isQuitting) {
-			event.preventDefault()
-			mainWindow?.hide()
+	// 窗口关闭事件 - 允许窗口正常关闭
+	mainWindow.on('close', () => {
+		// 如果正在退出，直接允许关闭
+		if (isQuitting) {
+			return
+		}
+		// 否则允许窗口正常关闭（不再阻止关闭并隐藏）
+	})
 
-			// 发出窗口隐藏事件
-			eventBus?.emit(AppEvents.WINDOW_HIDE)
+	// 窗口已关闭事件 - 减少窗口计数
+	mainWindow.on('closed', () => {
+		windowCount--
+		console.log(`[Main] Window closed. Remaining windows: ${windowCount}`)
+
+		// 清除引用
+		mainWindow = null
+
+		// 如果没有窗口了，在非 macOS 平台退出应用
+		if (windowCount === 0 && process.platform !== 'darwin') {
+			console.log('[Main] All windows closed, quitting application...')
+			app.quit()
 		}
 	})
 
@@ -88,13 +98,17 @@ function createWindow(): void {
 
 	// 窗口显示后发出事件
 	mainWindow.once('ready-to-show', () => {
-		eventBus?.emit(AppEvents.WINDOW_SHOW)
+		console.log('[Main] Window shown')
 	})
 
 	// 更新 IPC handlers 的窗口引用
 	if (ipcHandlers) {
 		ipcHandlers.setMainWindow(mainWindow)
 	}
+
+	// 增加窗口计数
+	windowCount++
+	console.log(`[Main] Window created. Total windows: ${windowCount}`)
 }
 
 /**
@@ -119,18 +133,17 @@ function initializeModules(): void {
 	notificationManager = new NotificationManager(eventBus, configManager)
 	console.log('[Main] ✓ NotificationManager initialized')
 
-	// 5. 初始化托盘管理器
-	trayManager = new TrayManager(eventBus, configManager, stateManager, icon)
-	console.log('[Main] ✓ TrayManager initialized')
-
-	// 6. 初始化 IPC handlers
+	// 5. 初始化 IPC handlers
 	ipcHandlers = new IPCHandlers(configManager, stateManager, notificationManager, mainWindow)
 	console.log('[Main] ✓ IPCHandlers initialized')
 
-	// 7. 设置退出事件监听
+	// 6. 设置退出事件监听（注意：不要在这里调用 app.quit()，避免循环）
 	eventBus.on(AppEvents.APP_QUIT, () => {
-		console.log('[Main] Quit event received, quitting application...')
-		app.quit()
+		console.log('[Main] Quit event received...')
+		if (!isQuitting) {
+			isQuitting = true
+			app.quit()
+		}
 	})
 
 	console.log('[Main] All modules initialized successfully!')
@@ -140,26 +153,17 @@ function initializeModules(): void {
  * 启动应用功能
  */
 function startApplication(): void {
-	if (!trayManager || !stateManager || !configManager) {
+	if (!stateManager || !configManager) {
 		console.error('[Main] Modules not initialized')
 		return
 	}
 
-	// 创建托盘
-	trayManager.create(mainWindow ?? undefined)
-
 	// 读取配置，决定是否启动监控
 	const config = configManager.getAll()
-	if (config.autoStart || process.argv.includes('--start-minimized')) {
-		// 如果配置了启动监控或指定了最小化启动参数
-		if (config.autoStart) {
-			console.log('[Main] Auto-starting monitoring...')
-			stateManager.startChecking(config.checkInterval)
-		}
-
-		if (config.startMinimized || process.argv.includes('--start-minimized')) {
-			mainWindow?.hide()
-		}
+	if (config.autoStart) {
+		// 如果配置了启动监控
+		console.log('[Main] Auto-starting monitoring...')
+		stateManager.startChecking(config.checkInterval)
 	}
 
 	console.log('[Main] Application started!')
@@ -181,12 +185,6 @@ function cleanupModules(): void {
 		ipcHandlers.destroy()
 		ipcHandlers = null
 		console.log('[Main] ✓ IPCHandlers destroyed')
-	}
-
-	if (trayManager) {
-		trayManager.destroy()
-		trayManager = null
-		console.log('[Main] ✓ TrayManager destroyed')
 	}
 
 	if (notificationManager) {
@@ -244,21 +242,20 @@ app.whenReady().then(() => {
 		// dock icon is clicked and there are no other windows open.
 		if (BrowserWindow.getAllWindows().length === 0) {
 			createWindow()
-			if (trayManager) {
-				trayManager.updateMenu(mainWindow ?? undefined)
-			}
 		}
 	})
 })
 
-// 托盘模式下，不希望在窗口关闭时退出应用
-// 只有通过托盘菜单的"退出应用"才会真正退出
+// 所有窗口关闭时的处理
+// 注意：对于非 macOS 平台，窗口的 closed 事件中已经处理了退出逻辑
+// macOS 用户通常期望即使所有窗口关闭，应用仍在运行（直到 Cmd+Q）
 app.on('window-all-closed', () => {
-	// 在托盘模式下，窗口关闭时不退出应用
-	// macOS 除外，保持原有行为
-	if (process.platform === 'darwin') {
-		// macOS 上，如果没有窗口，也不退出，因为有托盘
-		// 如果需要退出，用户需要通过托盘菜单或 Cmd+Q
+	// 在 macOS 上，通常不在此处退出应用
+	// macOS 用户习惯：关闭窗口 ≠ 退出应用，需要使用 Cmd+Q 才完全退出
+	if (process.platform !== 'darwin') {
+		// 非 macOS 平台，所有窗口关闭时退出应用
+		// 注意：由于窗口的 closed 事件已经处理了退出，这里主要是防御性代码
+		console.log('[Main] All windows closed event')
 	}
 })
 
