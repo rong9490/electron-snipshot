@@ -9,7 +9,7 @@ import type { EventListener } from '../types'
 export class EventBus {
 	private emitter: EventEmitter
 	private errorHandlers: EventListener<Error>[] = []
-	private isDestroyed = false
+	private _isDestroyed = false
 
 	constructor() {
 		this.emitter = new EventEmitter()
@@ -29,7 +29,7 @@ export class EventBus {
 	 * @param listener 监听器函数
 	 */
 	on<T = any>(event: string, listener: EventListener<T>): void {
-		if (this.isDestroyed) {
+		if (this._isDestroyed) {
 			throw new Error('[EventBus] Cannot add listener to destroyed EventBus')
 		}
 
@@ -46,7 +46,7 @@ export class EventBus {
 	 * @param listener 监听器函数
 	 */
 	once<T = any>(event: string, listener: EventListener<T>): void {
-		if (this.isDestroyed) {
+		if (this._isDestroyed) {
 			throw new Error('[EventBus] Cannot add listener to destroyed EventBus')
 		}
 
@@ -76,7 +76,7 @@ export class EventBus {
 	 * @param data 事件数据
 	 */
 	emit<T = any>(event: string, data?: T): boolean {
-		if (this.isDestroyed) {
+		if (this._isDestroyed) {
 			console.warn(`[EventBus] Cannot emit event "${event}" on destroyed EventBus`)
 			return false
 		}
@@ -187,11 +187,11 @@ export class EventBus {
 	 * 销毁事件总线
 	 */
 	destroy(): void {
-		if (this.isDestroyed) {
+		if (this._isDestroyed) {
 			return
 		}
 
-		this.isDestroyed = true
+		this._isDestroyed = true
 		this.removeAllListeners()
 		this.errorHandlers = []
 		this.emitter.removeAllListeners()
@@ -201,6 +201,6 @@ export class EventBus {
 	 * 检查是否已销毁
 	 */
 	isDestroyed(): boolean {
-		return this.isDestroyed
+		return this._isDestroyed
 	}
 }

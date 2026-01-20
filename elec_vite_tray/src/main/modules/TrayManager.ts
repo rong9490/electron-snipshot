@@ -3,8 +3,7 @@
  * 负责托盘图标、菜单、交互事件管理
  */
 
-import { Tray, Menu, nativeImage, BrowserWindow, app } from 'electron'
-import { join } from 'node:path'
+import { Tray, Menu, nativeImage, BrowserWindow, app, type NativeImage } from 'electron'
 import { EventBus } from './EventBus'
 import { ConfigManager } from './ConfigManager'
 import { StateManager } from './StateManager'
@@ -16,7 +15,7 @@ export class TrayManager {
 	private configManager: ConfigManager
 	private stateManager: StateManager
 	private iconPath: string
-	private isDestroyed = false
+	private _isDestroyed = false
 
 	// 托盘图标缓存
 	private iconCache: Map<string, NativeImage> = new Map()
@@ -59,7 +58,7 @@ export class TrayManager {
 	 * 创建托盘
 	 */
 	create(mainWindow?: BrowserWindow): void {
-		if (this.isDestroyed) {
+		if (this._isDestroyed) {
 			throw new Error('[TrayManager] Cannot create tray on destroyed TrayManager')
 		}
 
@@ -372,11 +371,11 @@ export class TrayManager {
 	 * 销毁托盘管理器
 	 */
 	destroy(): void {
-		if (this.isDestroyed) {
+		if (this._isDestroyed) {
 			return
 		}
 
-		this.isDestroyed = true
+		this._isDestroyed = true
 
 		if (this.tray) {
 			this.tray.destroy()
@@ -393,6 +392,6 @@ export class TrayManager {
 	 * 检查是否已销毁
 	 */
 	isDestroyed(): boolean {
-		return this.isDestroyed
+		return this._isDestroyed
 	}
 }

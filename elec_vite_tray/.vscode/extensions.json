@@ -1,4 +1,7 @@
 {
 	"recommendations": ["humao.rest-client", "biomejs.biome"],
-	"unwantedRecommendations": ["dbaeumer.vscode-eslint", "esbenp.prettier-vscode"]
+	"unwantedRecommendations": [
+		// "dbaeumer.vscode-eslint",
+		// "esbenp.prettier-vscode"
+	]
 }

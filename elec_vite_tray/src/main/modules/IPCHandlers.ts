@@ -7,14 +7,14 @@ import { ipcMain, BrowserWindow, app } from 'electron'
 import { ConfigManager } from './ConfigManager'
 import { StateManager } from './StateManager'
 import { NotificationManager } from './NotificationManager'
-import { AppEvents } from '../types'
+import { AppEvents, type AppConfig } from '../types'
 
 export class IPCHandlers {
 	private configManager: ConfigManager
 	private stateManager: StateManager
 	private notificationManager: NotificationManager
 	private mainWindow: BrowserWindow | null
-	private isDestroyed = false
+	private _isDestroyed = false
 
 	constructor(
 		configManager: ConfigManager,
@@ -136,7 +136,7 @@ export class IPCHandlers {
 	// ========== 配置相关 Handlers ==========
 
 	private async handleConfigGet(_event: Electron.IpcMainInvokeEvent, key: string) {
-		return this.configManager.get(key)
+		return this.configManager.get(key as keyof AppConfig)
 	}
 
 	private async handleConfigSet(
@@ -144,7 +144,7 @@ export class IPCHandlers {
 		key: string,
 		value: unknown
 	) {
-		this.configManager.set(key, value as never)
+		this.configManager.set(key as keyof AppConfig, value as never)
 	}
 
 	private async handleConfigGetAll() {
@@ -415,11 +415,11 @@ export class IPCHandlers {
 	 * 销毁 IPC handlers
 	 */
 	destroy(): void {
-		if (this.isDestroyed) {
+		if (this._isDestroyed) {
 			return
 		}
 
-		this.isDestroyed = true
+		this._isDestroyed = true
 		this.removeAllHandlers()
 
 		console.log('[IPCHandlers] Destroyed')
@@ -429,6 +429,6 @@ export class IPCHandlers {
 	 * 检查是否已销毁
 	 */
 	isDestroyed(): boolean {
-		return this.isDestroyed
+		return this._isDestroyed
 	}
 }

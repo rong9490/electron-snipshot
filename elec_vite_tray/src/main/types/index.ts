@@ -101,7 +101,7 @@ export interface NotificationOptions {
  * 托盘菜单项
  */
 export interface TrayMenuItem {
-	label: string
+	label?: string
 	click?: () => void
 	enabled?: boolean
 	visible?: boolean

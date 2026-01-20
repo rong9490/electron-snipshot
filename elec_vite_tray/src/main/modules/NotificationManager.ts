@@ -3,7 +3,7 @@
  * 负责系统通知、通知规则、通知历史
  */
 
-import { Notification, app } from 'electron'
+import { Notification } from 'electron'
 import { EventBus } from './EventBus'
 import { ConfigManager } from './ConfigManager'
 import { AppEvents, type NotificationOptions } from '../types'
@@ -27,7 +27,7 @@ export class NotificationManager {
 	private lastNotificationTime = 0
 	private minInterval = 2000 // 最小间隔2秒（可配置）
 	private maxHistorySize = 100 // 最大历史记录数
-	private isDestroyed = false
+	private _isDestroyed = false
 
 	constructor(eventBus: EventBus, configManager: ConfigManager) {
 		this.eventBus = eventBus
@@ -47,7 +47,7 @@ export class NotificationManager {
 	 * @returns 是否成功显示
 	 */
 	show(options: NotificationOptions): boolean {
-		if (this.isDestroyed) {
+		if (this._isDestroyed) {
 			console.warn('[NotificationManager] Cannot show notification on destroyed manager')
 			return false
 		}
@@ -109,7 +109,7 @@ export class NotificationManager {
 		// 根据类型设置不同的样式
 		switch (options.type) {
 			case 'error':
-				notificationOptions urgency = 'critical'
+				notificationOptions.urgency = 'critical'
 				break
 			case 'warning':
 				notificationOptions.urgency = 'normal'
@@ -120,9 +120,6 @@ export class NotificationManager {
 			default:
 				notificationOptions.urgency = 'normal'
 		}
-
-		// 应用名称
-		notificationOptions.appName = app.getName()
 
 		return new Notification(notificationOptions)
 	}
@@ -314,11 +311,11 @@ export class NotificationManager {
 	 * 销毁通知管理器
 	 */
 	destroy(): void {
-		if (this.isDestroyed) {
+		if (this._isDestroyed) {
 			return
 		}
 
-		this.isDestroyed = true
+		this._isDestroyed = true
 		this.clearHistory()
 
 		console.log('[NotificationManager] Destroyed')
@@ -328,6 +325,6 @@ export class NotificationManager {
 	 * 检查是否已销毁
 	 */
 	isDestroyed(): boolean {
-		return this.isDestroyed
+		return this._isDestroyed
 	}
 }

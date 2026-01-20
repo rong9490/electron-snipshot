@@ -3,7 +3,7 @@
  * 提供托盘图标生成、角标绘制等功能
  */
 
-import { nativeImage } from 'electron'
+import { nativeImage, type NativeImage } from 'electron'
 
 /**
  * 图标配置
@@ -159,7 +159,9 @@ export class IconCache {
 		// 如果缓存已满，删除最旧的条目
 		if (this.cache.size >= this.maxSize) {
 			const firstKey = this.cache.keys().next().value
-			this.cache.delete(firstKey)
+			if (firstKey !== undefined) {
+				this.cache.delete(firstKey)
+			}
 		}
 
 		this.cache.set(key, icon)

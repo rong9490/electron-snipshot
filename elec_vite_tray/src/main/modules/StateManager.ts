@@ -19,7 +19,7 @@ export class StateManager {
 	private eventBus: EventBus
 	private configManager: ConfigManager
 	private checkTimer?: NodeJS.Timeout
-	private isDestroyed = false
+	private _isDestroyed = false
 
 	constructor(eventBus: EventBus, configManager: ConfigManager) {
 		this.eventBus = eventBus
@@ -160,7 +160,7 @@ export class StateManager {
 	 * @param interval 检查间隔（毫秒），默认从配置读取
 	 */
 	startChecking(interval?: number): void {
-		if (this.isDestroyed) {
+		if (this._isDestroyed) {
 			throw new Error('[StateManager] Cannot start checking on destroyed StateManager')
 		}
 
@@ -218,7 +218,7 @@ export class StateManager {
 	 * 手动触发一次状态检查
 	 */
 	async checkState(): Promise<void> {
-		if (this.isDestroyed) {
+		if (this._isDestroyed) {
 			return
 		}
 
@@ -261,11 +261,11 @@ export class StateManager {
 	 * 销毁状态管理器
 	 */
 	destroy(): void {
-		if (this.isDestroyed) {
+		if (this._isDestroyed) {
 			return
 		}
 
-		this.isDestroyed = true
+		this._isDestroyed = true
 		this.stopChecking()
 		this.state = { ...DEFAULT_STATE }
 	}
@@ -274,6 +274,6 @@ export class StateManager {
 	 * 检查是否已销毁
 	 */
 	isDestroyed(): boolean {
-		return this.isDestroyed
+		return this._isDestroyed
 	}
 }

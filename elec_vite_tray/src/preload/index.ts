@@ -1,6 +1,16 @@
 import { electronAPI } from '@electron-toolkit/preload'
 import { contextBridge, ipcRenderer } from 'electron'
 
+// 获取环境变量
+const environment = {
+	NODE_ENV: process.env.NODE_ENV || 'development',
+	ELECTRON_RENDERER_URL: process.env.ELECTRON_RENDERER_URL || '',
+	isDev: process.env.NODE_ENV === 'development',
+	isProd: process.env.NODE_ENV === 'production',
+	platform: process.platform,
+	appVersion: process.env.npm_package_version || '1.0.0'
+}
+
 // Custom APIs for renderer
 const api = {
 	// 配置相关
@@ -111,6 +121,8 @@ if (process.contextIsolated) {
 	try {
 		contextBridge.exposeInMainWorld('electron', electronAPI)
 		contextBridge.exposeInMainWorld('api', api)
+		// 注入环境变量到渲染进程
+		contextBridge.exposeInMainWorld('ENV', environment)
 	} catch (error) {
 		console.error(error)
 	}
@@ -119,4 +131,6 @@ if (process.contextIsolated) {
 	window.electron = electronAPI
 	// @ts-expect-error (define in dts)
 	window.api = api
+	// @ts-expect-error (define in dts)
+	window.ENV = environment
 }

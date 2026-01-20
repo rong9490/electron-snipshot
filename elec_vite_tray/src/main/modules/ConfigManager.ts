@@ -26,7 +26,7 @@ const DEFAULT_CONFIG: AppConfig = {
 export class ConfigManager {
 	private store: Store<AppConfig>
 	private eventBus: EventBus
-	private isDestroyed = false
+	private _isDestroyed = false
 
 	constructor(eventBus: EventBus, storeName = 'app-config') {
 		this.eventBus = eventBus
@@ -39,7 +39,7 @@ export class ConfigManager {
 
 		// 监听配置变更并发出事件
 		this.store.onDidAnyChange((newVal, oldVal) => {
-			if (!this.isDestroyed) {
+			if (!this._isDestroyed) {
 				this.eventBus.emit(AppEvents.CONFIG_CHANGED, {
 					old: oldVal,
 					new: newVal
@@ -194,11 +194,11 @@ export class ConfigManager {
 	 * 销毁配置管理器
 	 */
 	destroy(): void {
-		if (this.isDestroyed) {
+		if (this._isDestroyed) {
 			return
 		}
 
-		this.isDestroyed = true
+		this._isDestroyed = true
 		// electron-store 不需要手动清理
 	}
 
@@ -206,6 +206,6 @@ export class ConfigManager {
 	 * 检查是否已销毁
 	 */
 	isDestroyed(): boolean {
-		return this.isDestroyed
+		return this._isDestroyed
 	}
 }

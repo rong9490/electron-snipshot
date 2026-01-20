@@ -71,6 +71,18 @@ interface NotificationStats {
 }
 
 /**
+ * 环境变量接口
+ */
+interface Environment {
+	NODE_ENV: string
+	ELECTRON_RENDERER_URL: string
+	isDev: boolean
+	isProd: boolean
+	platform: NodeJS.Platform
+	appVersion: string
+}
+
+/**
  * 应用 API 接口
  */
 interface AppAPI {
@@ -320,5 +332,6 @@ declare global {
 	interface Window {
 		electron: ElectronAPI
 		api: AppAPI
+		ENV: Environment
 	}
 }

@@ -66,6 +66,16 @@ function createWindow(): void {
 		return { action: 'deny' }
 	})
 
+	// 添加快捷键：Ctrl/Cmd + Shift + T 加载测试页面
+	mainWindow.webContents.on('before-input-event', (event, input) => {
+		if ((input.control || input.meta) && input.shift && input.key.toLowerCase() === 't') {
+			event.preventDefault()
+			const testPagePath = join(__dirname, '../../test-env-injection.html')
+			mainWindow?.loadFile(testPagePath)
+			console.log('[Main] Loaded environment test page')
+		}
+	})
+
 	// HMR for renderer base on electron-vite cli.
 	// Load the remote URL for development or the local html file for production.
 	if (is.dev && process.env.ELECTRON_RENDERER_URL) {
