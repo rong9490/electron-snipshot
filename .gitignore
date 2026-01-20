@@ -144,3 +144,4 @@ out
 .DS_Store
 .eslintcache
 *.log*
+.claude

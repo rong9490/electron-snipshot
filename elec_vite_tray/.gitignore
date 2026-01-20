@@ -26,3 +26,6 @@ bun-debug.log*
 .env
 .env.local
 .env.*.local
+
+# Worktrees
+.worktrees

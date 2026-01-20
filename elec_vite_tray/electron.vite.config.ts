@@ -5,10 +5,11 @@ import { defineConfig } from 'electron-vite'
 export default defineConfig({
 	main: {},
 	preload: {},
+	// 考虑使用外部url界面
 	renderer: {
 		resolve: {
 			alias: {
-				'@renderer': resolve('src/renderer/src')
+				'@renderer': resolve(__dirname, 'src/renderer/src')
 			}
 		},
 		plugins: [react()]
