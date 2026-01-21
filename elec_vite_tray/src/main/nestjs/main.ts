@@ -5,6 +5,7 @@
 
 import { NestFactory } from '@nestjs/core'
 import { ExpressAdapter } from '@nestjs/platform-express'
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 import { AppModule } from './app.module'
 import { getServerConfig } from './config/server.config'
 import { Logger } from '@nestjs/common'
@@ -49,8 +50,27 @@ export async function createNestApp() {
 		await app.listen(config.port, config.host)
 
 		const url = `http://${config.host}:${config.port}`
+
+		// 配置 Swagger 文档
+		if (config.environment === 'development') {
+			const configSwagger = new DocumentBuilder()
+				.setTitle('Elec Vite Tray API')
+				.setDescription('Electron 托盘应用的 REST API 文档')
+				.setVersion('1.0')
+				.addTag('health', '健康检查接口')
+				.addTag('config', '配置管理接口')
+				.addTag('state', '状态管理接口')
+				.addTag('tasks', '任务管理接口')
+				.build()
+
+			const document = SwaggerModule.createDocument(app, configSwagger)
+			SwaggerModule.setup('api/docs', app, document)
+
+			logger.log(`📚 Swagger Documentation: ${url}/api/docs`)
+		}
+
 		logger.log(`✅ NestJS is running on ${url}`)
-		logger.log(`📚 API Documentation: ${url}/api`)
+		logger.log(`📚 API Base URL: ${url}/api`)
 
 		return app
 	} catch (error) {
