@@ -1,11 +1,16 @@
 /**
  * Electron 主进程入口
  * 集成所有模块：EventBus, ConfigManager, StateManager, NotificationManager, TrayManager, IPCHandlers
+ * 集成 NestJS 服务
  */
 
 import { join } from 'node:path'
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import { app, BrowserWindow, shell } from 'electron'
+
+// 导入 NestJS
+import 'reflect-metadata'
+import { bootstrapNestJS, shutdownNestJS } from './nestjs/main'
 
 // 导入所有模块
 import { EventBus } from './modules/EventBus'
@@ -241,7 +246,7 @@ function cleanupModules(): void {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
 	// Set app user model id for windows
 	electronApp.setAppUserModelId('com.electron')
 
@@ -251,6 +256,15 @@ app.whenReady().then(() => {
 	app.on('browser-window-created', (_, window) => {
 		optimizer.watchWindowShortcuts(window)
 	})
+
+	// 🚀 启动 NestJS 服务
+	try {
+		await bootstrapNestJS()
+		console.log('[Main] ✓ NestJS service started')
+	} catch (error) {
+		console.error('[Main] ✗ Failed to start NestJS:', error)
+		// NestJS 启动失败不应阻止 Electron 启动
+	}
 
 	// 初始化所有模块
 	initializeModules()
@@ -290,13 +304,21 @@ app.on('window-all-closed', () => {
 })
 
 // 应用退出前清理所有资源
-app.on('before-quit', () => {
+app.on('before-quit', async () => {
 	console.log('[Main] Application quitting...')
 	isQuitting = true
 
 	// 发出退出事件
 	if (eventBus) {
 		eventBus.emit(AppEvents.APP_QUIT)
+	}
+
+	// 🛑 关闭 NestJS 服务
+	try {
+		await shutdownNestJS()
+		console.log('[Main] ✓ NestJS service shut down')
+	} catch (error) {
+		console.error('[Main] ✗ Error shutting down NestJS:', error)
 	}
 
 	// 清理所有模块

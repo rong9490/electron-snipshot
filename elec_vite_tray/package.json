@@ -27,10 +27,14 @@
 	"dependencies": {
 		"@electron-toolkit/preload": "^3.0.2",
 		"@electron-toolkit/utils": "^4.0.0",
+		"@nestjs/common": "^11.1.12",
+		"@nestjs/core": "^11.1.12",
+		"@nestjs/platform-express": "^11.1.12",
 		"adm-zip": "^0.5.16",
 		"dotenv": "^17.2.3",
 		"electron-store": "^8.1.0",
-		"electron-updater": "^6.7.3"
+		"electron-updater": "^6.7.3",
+		"reflect-metadata": "^0.2.2"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.3.11",
