@@ -12,6 +12,7 @@ import { EventBus } from './modules/EventBus'
 import { ConfigManager } from './modules/ConfigManager'
 import { StateManager } from './modules/StateManager'
 import { NotificationManager } from './modules/NotificationManager'
+import { TrayManager } from './modules/TrayManager'
 import { IPCHandlers } from './modules/IPCHandlers'
 import { AppEvents } from './types'
 
@@ -25,6 +26,7 @@ let eventBus: EventBus | null = null
 let configManager: ConfigManager | null = null
 let stateManager: StateManager | null = null
 let notificationManager: NotificationManager | null = null
+let trayManager: TrayManager | null = null
 let ipcHandlers: IPCHandlers | null = null
 
 /**
@@ -133,7 +135,23 @@ function initializeModules(): void {
 	notificationManager = new NotificationManager(eventBus, configManager)
 	console.log('[Main] ✓ NotificationManager initialized')
 
-	// 5. 初始化 IPC handlers
+	// 5. 初始化托盘管理器 - 计算正确的图标路径
+	// 在开发环境：resources 目录在项目根目录
+	// 在打包后：resources 目录在 app.asar.unpacked/resources/
+	let trayIconPath: string
+	if (app.isPackaged) {
+		// 生产环境：使用 app.getAppPath() 获取应用根目录
+		// app.asar.unpacked 目录与 app.asar 在同一级别
+		const appPath = app.getAppPath()
+		trayIconPath = join(appPath, 'app.asar.unpacked', 'resources', 'icon.png')
+	} else {
+		// 开发环境：直接使用相对路径
+		trayIconPath = join(__dirname, '../../resources/icon.png')
+	}
+	trayManager = new TrayManager(eventBus, configManager, stateManager, trayIconPath)
+	console.log('[Main] ✓ TrayManager initialized')
+
+	// 6. 初始化 IPC handlers
 	ipcHandlers = new IPCHandlers(configManager, stateManager, notificationManager, mainWindow)
 	console.log('[Main] ✓ IPCHandlers initialized')
 
@@ -187,6 +205,12 @@ function cleanupModules(): void {
 		console.log('[Main] ✓ IPCHandlers destroyed')
 	}
 
+	if (trayManager) {
+		trayManager.destroy()
+		trayManager = null
+		console.log('[Main] ✓ TrayManager destroyed')
+	}
+
 	if (notificationManager) {
 		notificationManager.destroy()
 		notificationManager = null
@@ -233,6 +257,12 @@ app.whenReady().then(() => {
 
 	// 创建窗口
 	createWindow()
+
+	// 创建托盘
+	if (trayManager) {
+		trayManager.create(mainWindow ?? undefined)
+		console.log('[Main] ✓ Tray created')
+	}
 
 	// 启动应用功能
 	startApplication()

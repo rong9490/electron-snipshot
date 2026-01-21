@@ -5,12 +5,8 @@
 
 import { useEffect, useState } from 'react'
 
-// 使用 window.api 访问暴露的 API
-declare global {
-	interface Window {
-		api: import('../../../preload/index.d.ts').AppAPI
-	}
-}
+// 类型声明已通过 src/preload/index.d.ts 全局声明
+// 可以直接使用 window.api 而无需额外导入
 
 export function ApiUsageExample() {
 	const [config, setConfig] = useState<any>(null)

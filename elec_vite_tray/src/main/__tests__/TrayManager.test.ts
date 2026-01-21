@@ -5,8 +5,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { TrayManager } from '../modules/TrayManager'
 import { EventBus } from '../modules/EventBus'
-import { ConfigManager } from '../modules/ConfigManager'
-import { StateManager } from '../modules/StateManager'
 import { AppEvents } from '../types'
 
 // Mock Electron APIs
@@ -120,7 +118,6 @@ describe('TrayManager', () => {
 		})
 
 		it('创建托盘时应该设置工具提示', () => {
-			const { app } = require('electron')
 			trayManager.create()
 
 			expect(mockTray.setToolTip).toHaveBeenCalledWith('TestApp')
@@ -208,7 +205,9 @@ describe('TrayManager', () => {
 		it('应该包含基本的菜单项', () => {
 			trayManager.updateMenu()
 
-			const menuTemplate = mockMenu.buildFromTemplate.mock.calls[0][0]
+			const calls = mockMenu.buildFromTemplate.mock.calls as any[][]
+			expect(calls.length).toBeGreaterThan(0)
+			const menuTemplate = calls[0][0] as any[]
 			const labels = menuTemplate.map((item: any) => item.label)
 
 			expect(labels).toContain('显示窗口')
@@ -227,7 +226,9 @@ describe('TrayManager', () => {
 
 			trayManager.updateMenu()
 
-			const menuTemplate = mockMenu.buildFromTemplate.mock.calls[0][0]
+			const calls = mockMenu.buildFromTemplate.mock.calls as any[][]
+			expect(calls.length).toBeGreaterThan(0)
+			const menuTemplate = calls[0][0] as any[]
 			const firstItem = menuTemplate[0]
 
 			expect(firstItem.label).toContain('未读消息: 5')
@@ -242,7 +243,9 @@ describe('TrayManager', () => {
 
 			trayManager.updateMenu()
 
-			const menuTemplate = mockMenu.buildFromTemplate.mock.calls[0][0]
+			const calls = mockMenu.buildFromTemplate.mock.calls as any[][]
+			expect(calls.length).toBeGreaterThan(0)
+			const menuTemplate = calls[0][0] as any[]
 			const monitoringMenu = menuTemplate.find((item: any) => item.label === '监控状态')
 
 			expect(monitoringMenu).toBeDefined()
@@ -258,9 +261,12 @@ describe('TrayManager', () => {
 
 			trayManager.updateMenu()
 
-			const menuTemplate = mockMenu.buildFromTemplate.mock.calls[0][0]
+			const calls = mockMenu.buildFromTemplate.mock.calls as any[][]
+			expect(calls.length).toBeGreaterThan(0)
+			const menuTemplate = calls[0][0] as any[]
 			const monitoringMenu = menuTemplate.find((item: any) => item.label === '监控状态')
-			const startStopItem = monitoringMenu.submenu[0]
+			expect(monitoringMenu?.submenu).toBeDefined()
+			const startStopItem = monitoringMenu!.submenu![0]
 
 			expect(startStopItem.label).toBe('停止监控')
 		})
@@ -274,9 +280,12 @@ describe('TrayManager', () => {
 
 			trayManager.updateMenu()
 
-			const menuTemplate = mockMenu.buildFromTemplate.mock.calls[0][0]
+			const calls = mockMenu.buildFromTemplate.mock.calls as any[][]
+			expect(calls.length).toBeGreaterThan(0)
+			const menuTemplate = calls[0][0] as any[]
 			const monitoringMenu = menuTemplate.find((item: any) => item.label === '监控状态')
-			const startStopItem = monitoringMenu.submenu[0]
+			expect(monitoringMenu?.submenu).toBeDefined()
+			const startStopItem = monitoringMenu!.submenu![0]
 
 			expect(startStopItem.label).toBe('开始监控')
 		})

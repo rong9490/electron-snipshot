@@ -5,7 +5,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { StateManager } from '../modules/StateManager'
 import { EventBus } from '../modules/EventBus'
-import { ConfigManager } from '../modules/ConfigManager'
 import { AppEvents } from '../types'
 
 // Mock ConfigManager

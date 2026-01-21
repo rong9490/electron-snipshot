@@ -298,9 +298,9 @@ describe('EventBus', () => {
 
 	describe('异步监听器', () => {
 		it('应该支持异步监听器', async () => {
-			const mock = vi.fn(async (data: string) => {
+			const mock = vi.fn(async (_data: string) => {
 				await new Promise((resolve) => setTimeout(resolve, 10))
-				return data.toUpperCase()
+				// EventListener 需要返回 void，不能返回值
 			})
 
 			eventBus.on('test-event', mock)

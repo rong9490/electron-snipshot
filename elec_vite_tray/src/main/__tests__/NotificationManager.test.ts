@@ -284,9 +284,10 @@ describe('NotificationManager', () => {
 			})
 
 			// 模拟点击事件
-			const clickCallback = mockNotification.on.mock.calls.find(
+			const clickCall = mockNotification.on.mock.calls.find(
 				(call) => call[0] === 'click'
-			)[1]
+			)
+			const clickCallback = clickCall?.[1]
 
 			if (clickCallback) {
 				clickCallback()
@@ -302,9 +303,10 @@ describe('NotificationManager', () => {
 			})
 
 			// 模拟点击
-			const clickCallback = mockNotification.on.mock.calls.find(
+			const clickCall = mockNotification.on.mock.calls.find(
 				(call) => call[0] === 'click'
-			)[1]
+			)
+			const clickCallback = clickCall?.[1]
 
 			if (clickCallback) {
 				clickCallback()
@@ -324,9 +326,10 @@ describe('NotificationManager', () => {
 			})
 
 			// 模拟点击
-			const clickCallback = mockNotification.on.mock.calls.find(
+			const clickCall = mockNotification.on.mock.calls.find(
 				(call) => call[0] === 'click'
-			)[1]
+			)
+			const clickCallback = clickCall?.[1]
 
 			if (clickCallback) {
 				clickCallback()

@@ -1,6 +1,8 @@
 import { electronAPI } from '@electron-toolkit/preload'
 import { contextBridge, ipcRenderer } from 'electron'
 
+/// <reference types="./index.d.ts" />
+
 // 获取环境变量
 const environment = {
 	NODE_ENV: process.env.NODE_ENV || 'development',
@@ -127,10 +129,11 @@ if (process.contextIsolated) {
 		console.error(error)
 	}
 } else {
-	// @ts-expect-error (define in dts)
+	// contextIsolated 为 false 时的降级处理（实际上在现代 Electron 中不会执行）
+	// @ts-ignore - 在非隔离模式下直接挂载到 window
 	window.electron = electronAPI
-	// @ts-expect-error (define in dts)
+	// @ts-ignore
 	window.api = api
-	// @ts-expect-error (define in dts)
+	// @ts-ignore
 	window.ENV = environment
 }

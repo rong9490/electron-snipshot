@@ -3,11 +3,12 @@
  * 负责托盘图标、菜单、交互事件管理
  */
 
-import { Tray, Menu, nativeImage, BrowserWindow, app, type NativeImage } from 'electron'
+import { Tray, Menu, nativeImage, BrowserWindow, app, type NativeImage, dialog } from 'electron'
 import { EventBus } from './EventBus'
 import { ConfigManager } from './ConfigManager'
 import { StateManager } from './StateManager'
 import { AppEvents, type TrayMenuItem } from '../types'
+import { SystemInfo, type SystemInfoData } from './SystemInfo'
 
 export class TrayManager {
 	private tray: Tray | null = null
@@ -246,6 +247,42 @@ export class TrayManager {
 
 		menuItems.push({ type: 'separator' })
 
+		// 系统信息子菜单
+		const systemInfoSubmenu: TrayMenuItem[] = [
+			{
+				label: '查看系统状态',
+				click: () => {
+					this.showSystemInfo('system')
+				}
+			},
+			{
+				label: '查看服务状态',
+				click: () => {
+					this.showSystemInfo('services')
+				}
+			},
+			{
+				label: '查看端口信息',
+				click: () => {
+					this.showSystemInfo('ports')
+				}
+			},
+			{ type: 'separator' },
+			{
+				label: '查看全部信息',
+				click: () => {
+					this.showSystemInfo('all')
+				}
+			}
+		]
+
+		menuItems.push({
+			label: '系统信息',
+			submenu: systemInfoSubmenu
+		})
+
+		menuItems.push({ type: 'separator' })
+
 		// 设置
 		menuItems.push({
 			label: '设置',
@@ -309,7 +346,7 @@ export class TrayManager {
 	 * 更新托盘图标
 	 */
 	private updateTrayIcon(): void {
-		if (!this.tray || this.isDestroyed) return
+		if (!this.tray || this._isDestroyed) return
 
 		const newIcon = this.createTrayIcon()
 		this.tray.setImage(newIcon)
@@ -325,7 +362,7 @@ export class TrayManager {
 	 * 更新托盘菜单
 	 */
 	updateMenu(mainWindow?: BrowserWindow): void {
-		if (!this.tray || this.isDestroyed) return
+		if (!this.tray || this._isDestroyed) return
 
 		const menu = this.buildMenu(mainWindow)
 		this.tray.setContextMenu(menu)
@@ -353,7 +390,7 @@ export class TrayManager {
 	 * 显示气球通知（仅 Windows）
 	 */
 	displayBalloon(options: { title: string; content: string }): void {
-		if (!this.tray || this.isDestroyed) return
+		if (!this.tray || this._isDestroyed) return
 
 		if (process.platform === 'win32') {
 			this.tray.displayBalloon(options)
@@ -393,5 +430,145 @@ export class TrayManager {
 	 */
 	isDestroyed(): boolean {
 		return this._isDestroyed
+	}
+
+	/**
+	 * 显示系统信息对话框
+	 * @param section 要显示的部分 (system | services | ports | all)
+	 */
+	private showSystemInfo(section: 'system' | 'services' | 'ports' | 'all'): void {
+		try {
+			// 适配 ConfigManager 接口
+			const configManagerAdapter = {
+				getAll: () => this.configManager.getAll(),
+				get: (key: string) => {
+					// ConfigManager 的 get 方法有类型约束，这里使用类型断言
+					return (this.configManager as any).get(key)
+				}
+			}
+
+			const systemInfo = SystemInfo.getAll(configManagerAdapter, this.stateManager)
+			let content = ''
+
+			switch (section) {
+				case 'system':
+					content = this.formatSystemStatus(systemInfo)
+					break
+				case 'services':
+					content = this.formatServiceStatus(systemInfo)
+					break
+				case 'ports':
+					content = this.formatPortInfo(systemInfo)
+					break
+				case 'all':
+				default:
+					content = SystemInfo.formatToText(systemInfo)
+					break
+			}
+
+			dialog.showMessageBox({
+				type: 'info',
+				title: '系统信息',
+				message: this.getDialogTitle(section),
+				detail: content,
+				buttons: ['刷新', '复制到剪贴板', '关闭'],
+				defaultId: 0,
+				cancelId: 2
+			}).then((result) => {
+				if (result.response === 0) {
+					// 刷新 - 重新显示对话框
+					this.showSystemInfo(section)
+				} else if (result.response === 1) {
+					// 复制到剪贴板
+					const { clipboard } = require('electron')
+					clipboard.writeText(content)
+					console.log('[TrayManager] System info copied to clipboard')
+				}
+			})
+		} catch (error) {
+			console.error('[TrayManager] Failed to show system info:', error)
+			dialog.showErrorBox('错误', `无法获取系统信息: ${(error as Error).message}`)
+		}
+	}
+
+	/**
+	 * 获取对话框标题
+	 */
+	private getDialogTitle(section: string): string {
+		const titles = {
+			system: '系统状态',
+			services: '服务状态',
+			ports: '端口信息',
+			all: '完整系统信息'
+		}
+		return titles[section] || '系统信息'
+	}
+
+	/**
+	 * 格式化系统状态
+	 */
+	private formatSystemStatus(data: SystemInfoData): string {
+		const sys = data.system
+		return `操作系统: ${sys.system.platform} ${sys.system.release}
+架构: ${sys.system.arch}
+主机名: ${sys.system.hostname}
+运行时间: ${Math.floor(sys.system.uptime / 3600)} 小时
+
+CPU:
+  型号: ${sys.cpu.model}
+  核心: ${sys.cpu.cores}
+  使用率: ${sys.cpu.usage}%
+
+内存:
+  总计: ${sys.memory.total} MB
+  已用: ${sys.memory.used} MB
+  空闲: ${sys.memory.free} MB
+  使用率: ${sys.memory.usage}%
+
+进程:
+  PID: ${sys.process.pid}
+  Electron: ${sys.process.version}
+  Node: ${sys.process.nodeVersion}
+  内存占用: ${sys.process.memoryUsage} MB`
+	}
+
+	/**
+	 * 格式化服务状态
+	 */
+	private formatServiceStatus(data: SystemInfoData): string {
+		const svc = data.services
+		return `应用名称: ${svc.app.name}
+应用版本: ${svc.app.version}
+监控状态: ${svc.app.isMonitoring ? '运行中' : '已停止'}
+开机自启: ${svc.app.autoStart ? '是' : '否'}${svc.app.checkInterval ? `\n检查间隔: ${Math.round(svc.app.checkInterval / 1000)} 秒` : ''}
+
+任务统计:
+  总计: ${svc.monitoring.tasks.total}
+  运行中: ${svc.monitoring.tasks.running}
+  已完成: ${svc.monitoring.tasks.completed}
+  失败: ${svc.monitoring.tasks.failed}
+
+配置:
+  启用通知: ${svc.config.enableNotification ? '是' : '否'}
+  启用角标: ${svc.config.enableBadge ? '是' : '否'}
+  托盘图标颜色: ${svc.config.trayIconColor}`
+	}
+
+	/**
+	 * 格式化端口信息
+	 */
+	private formatPortInfo(data: SystemInfoData): string {
+		if (data.ports.length === 0) {
+			return '无活动端口'
+		}
+
+		return data.ports
+			.map(
+				(port) =>
+					`端口 ${port.port} (${port.type}):\n  状态: ${port.status}\n  描述: ${port.description}${
+						port.url ? `\n  URL: ${port.url}` : ''
+					}`
+			)
+			.join('\n\n')
 	}
 }
