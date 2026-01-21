@@ -4,9 +4,9 @@
  */
 
 import { Notification } from 'electron'
-import { EventBus } from './EventBus'
-import { ConfigManager } from './ConfigManager'
 import { AppEvents, type NotificationOptions } from '../types'
+import type { ConfigManager } from './ConfigManager'
+import type { EventBus } from './EventBus'
 
 /**
  * 通知历史记录
@@ -241,9 +241,7 @@ export class NotificationManager {
 	 * 删除指定时间之前的历史
 	 */
 	deleteHistoryBefore(timestamp: number): void {
-		this.notificationHistory = this.notificationHistory.filter(
-			(n) => n.timestamp >= timestamp
-		)
+		this.notificationHistory = this.notificationHistory.filter((n) => n.timestamp >= timestamp)
 	}
 
 	/**

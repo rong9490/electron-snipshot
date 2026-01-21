@@ -2,12 +2,12 @@
  * 健康检查服务
  */
 
+import * as os from 'node:os'
 import { Injectable } from '@nestjs/common'
 import { app } from 'electron'
-import * as os from 'node:os'
 
 @Injectable()
-export class AppService {
+export class HealthService {
 	/**
 	 * 获取健康状态
 	 */
@@ -16,7 +16,7 @@ export class AppService {
 			status: 'ok',
 			timestamp: new Date().toISOString(),
 			uptime: process.uptime(),
-			message: 'NestJS service is running',
+			message: 'NestJS service is running'
 		}
 	}
 
@@ -28,7 +28,7 @@ export class AppService {
 			service: {
 				name: 'elec_vite_tray',
 				version: app.getVersion(),
-				env: process.env.NODE_ENV || 'development',
+				env: process.env.NODE_ENV || 'development'
 			},
 			system: {
 				platform: os.platform(),
@@ -38,10 +38,10 @@ export class AppService {
 				memory: {
 					total: os.totalmem(),
 					free: os.freemem(),
-					usage: process.memoryUsage(),
-				},
+					usage: process.memoryUsage()
+				}
 			},
-			timestamp: new Date().toISOString(),
+			timestamp: new Date().toISOString()
 		}
 	}
 }

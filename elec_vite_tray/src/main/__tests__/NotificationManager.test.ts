@@ -2,9 +2,9 @@
  * NotificationManager 单元测试
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { NotificationManager } from '../modules/NotificationManager'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { EventBus } from '../modules/EventBus'
+import { NotificationManager } from '../modules/NotificationManager'
 import { AppEvents } from '../types'
 
 // Mock Electron Notification
@@ -284,9 +284,7 @@ describe('NotificationManager', () => {
 			})
 
 			// 模拟点击事件
-			const clickCall = mockNotification.on.mock.calls.find(
-				(call) => call[0] === 'click'
-			)
+			const clickCall = mockNotification.on.mock.calls.find((call) => call[0] === 'click')
 			const clickCallback = clickCall?.[1]
 
 			if (clickCallback) {
@@ -303,9 +301,7 @@ describe('NotificationManager', () => {
 			})
 
 			// 模拟点击
-			const clickCall = mockNotification.on.mock.calls.find(
-				(call) => call[0] === 'click'
-			)
+			const clickCall = mockNotification.on.mock.calls.find((call) => call[0] === 'click')
 			const clickCallback = clickCall?.[1]
 
 			if (clickCallback) {
@@ -326,9 +322,7 @@ describe('NotificationManager', () => {
 			})
 
 			// 模拟点击
-			const clickCall = mockNotification.on.mock.calls.find(
-				(call) => call[0] === 'click'
-			)
+			const clickCall = mockNotification.on.mock.calls.find((call) => call[0] === 'click')
 			const clickCallback = clickCall?.[1]
 
 			if (clickCallback) {

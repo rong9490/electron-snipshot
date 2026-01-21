@@ -3,12 +3,12 @@
  * 在 Electron 主进程中启动 NestJS 服务
  */
 
+import { Logger } from '@nestjs/common'
 import { NestFactory } from '@nestjs/core'
 import { ExpressAdapter } from '@nestjs/platform-express'
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { AppModule } from './app.module'
 import { getServerConfig } from './config/server.config'
-import { Logger } from '@nestjs/common'
 
 let nestApp: Awaited<ReturnType<typeof createNestApp>> | null = null
 
@@ -23,21 +23,17 @@ export async function createNestApp() {
 
 	try {
 		// 创建 NestJS 应用
-		const app = await NestFactory.create(
-			AppModule,
-			new ExpressAdapter(),
-			{
-				logger: config.logLevel as any,
-				// 禁用自动 CORS，我们手动配置
-				cors: false,
-			}
-		)
+		const app = await NestFactory.create(AppModule, new ExpressAdapter(), {
+			logger: config.logLevel as any,
+			// 禁用自动 CORS，我们手动配置
+			cors: false
+		})
 
 		// 手动配置 CORS
 		if (config.cors.origin) {
 			app.enableCors({
 				origin: config.cors.origin,
-				credentials: config.cors.credentials,
+				credentials: config.cors.credentials
 			})
 			logger.log(`✅ CORS enabled for origins: ${config.cors.origin}`)
 		}

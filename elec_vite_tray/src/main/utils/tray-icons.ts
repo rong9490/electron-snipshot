@@ -3,7 +3,7 @@
  * 提供托盘图标生成、角标绘制等功能
  */
 
-import { nativeImage, type NativeImage } from 'electron'
+import { type NativeImage, nativeImage } from 'electron'
 
 /**
  * 图标配置

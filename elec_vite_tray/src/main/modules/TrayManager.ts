@@ -3,11 +3,19 @@
  * 负责托盘图标、菜单、交互事件管理
  */
 
-import { Tray, Menu, nativeImage, BrowserWindow, app, type NativeImage, dialog } from 'electron'
-import { EventBus } from './EventBus'
-import { ConfigManager } from './ConfigManager'
-import { StateManager } from './StateManager'
+import {
+	app,
+	type BrowserWindow,
+	dialog,
+	Menu,
+	type NativeImage,
+	nativeImage,
+	Tray
+} from 'electron'
 import { AppEvents, type TrayMenuItem } from '../types'
+import type { ConfigManager } from './ConfigManager'
+import type { EventBus } from './EventBus'
+import type { StateManager } from './StateManager'
 import { SystemInfo, type SystemInfoData } from './SystemInfo'
 
 export class TrayManager {
@@ -466,25 +474,27 @@ export class TrayManager {
 					break
 			}
 
-			dialog.showMessageBox({
-				type: 'info',
-				title: '系统信息',
-				message: this.getDialogTitle(section),
-				detail: content,
-				buttons: ['刷新', '复制到剪贴板', '关闭'],
-				defaultId: 0,
-				cancelId: 2
-			}).then((result) => {
-				if (result.response === 0) {
-					// 刷新 - 重新显示对话框
-					this.showSystemInfo(section)
-				} else if (result.response === 1) {
-					// 复制到剪贴板
-					const { clipboard } = require('electron')
-					clipboard.writeText(content)
-					console.log('[TrayManager] System info copied to clipboard')
-				}
-			})
+			dialog
+				.showMessageBox({
+					type: 'info',
+					title: '系统信息',
+					message: this.getDialogTitle(section),
+					detail: content,
+					buttons: ['刷新', '复制到剪贴板', '关闭'],
+					defaultId: 0,
+					cancelId: 2
+				})
+				.then((result) => {
+					if (result.response === 0) {
+						// 刷新 - 重新显示对话框
+						this.showSystemInfo(section)
+					} else if (result.response === 1) {
+						// 复制到剪贴板
+						const { clipboard } = require('electron')
+						clipboard.writeText(content)
+						console.log('[TrayManager] System info copied to clipboard')
+					}
+				})
 		} catch (error) {
 			console.error('[TrayManager] Failed to show system info:', error)
 			dialog.showErrorBox('错误', `无法获取系统信息: ${(error as Error).message}`)

@@ -26,8 +26,8 @@ export function getServerConfig(): ServerConfig {
 			origin: isDev
 				? ['http://localhost:5173', 'http://localhost:5174', 'http://127.0.0.1:5173']
 				: false,
-			credentials: true,
+			credentials: true
 		},
-		logLevel: isDev ? ['log', 'error', 'warn', 'debug'] : ['error', 'warn'],
+		logLevel: isDev ? ['log', 'error', 'warn', 'debug'] : ['error', 'warn']
 	}
 }

@@ -10,15 +10,15 @@ import { app, BrowserWindow, shell } from 'electron'
 
 // 导入 NestJS
 import 'reflect-metadata'
-import { bootstrapNestJS, shutdownNestJS } from './nestjs/main'
+import { ConfigManager } from './modules/ConfigManager'
 
 // 导入所有模块
 import { EventBus } from './modules/EventBus'
-import { ConfigManager } from './modules/ConfigManager'
-import { StateManager } from './modules/StateManager'
-import { NotificationManager } from './modules/NotificationManager'
-import { TrayManager } from './modules/TrayManager'
 import { IPCHandlers } from './modules/IPCHandlers'
+import { NotificationManager } from './modules/NotificationManager'
+import { StateManager } from './modules/StateManager'
+import { TrayManager } from './modules/TrayManager'
+import { bootstrapNestJS, shutdownNestJS } from './nestjs/main'
 import { AppEvents } from './types'
 
 // 全局变量

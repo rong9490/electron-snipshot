@@ -3,11 +3,11 @@
  * 处理来自渲染进程的所有 IPC 调用
  */
 
-import { ipcMain, BrowserWindow, app } from 'electron'
-import { ConfigManager } from './ConfigManager'
-import { StateManager } from './StateManager'
-import { NotificationManager } from './NotificationManager'
-import { AppEvents, type AppConfig } from '../types'
+import { app, type BrowserWindow, ipcMain } from 'electron'
+import { type AppConfig, AppEvents } from '../types'
+import type { ConfigManager } from './ConfigManager'
+import type { NotificationManager } from './NotificationManager'
+import type { StateManager } from './StateManager'
 
 export class IPCHandlers {
 	private configManager: ConfigManager
@@ -50,10 +50,7 @@ export class IPCHandlers {
 		// ========== 状态相关 ==========
 		ipcMain.handle('state:get', this.handleStateGet.bind(this))
 		ipcMain.handle('state:set-unread-count', this.handleStateSetUnreadCount.bind(this))
-		ipcMain.handle(
-			'state:increment-unread-count',
-			this.handleStateIncrementUnreadCount.bind(this)
-		)
+		ipcMain.handle('state:increment-unread-count', this.handleStateIncrementUnreadCount.bind(this))
 		ipcMain.handle('state:clear-unread-count', this.handleStateClearUnreadCount.bind(this))
 		ipcMain.handle('state:add-task', this.handleStateAddTask.bind(this))
 		ipcMain.handle('state:update-task', this.handleStateUpdateTask.bind(this))
@@ -139,11 +136,7 @@ export class IPCHandlers {
 		return this.configManager.get(key as keyof AppConfig)
 	}
 
-	private async handleConfigSet(
-		_event: Electron.IpcMainInvokeEvent,
-		key: string,
-		value: unknown
-	) {
+	private async handleConfigSet(_event: Electron.IpcMainInvokeEvent, key: string, value: unknown) {
 		this.configManager.set(key as keyof AppConfig, value as never)
 	}
 
@@ -159,10 +152,7 @@ export class IPCHandlers {
 		this.configManager.reset()
 	}
 
-	private async handleConfigSetAutoStart(
-		_event: Electron.IpcMainInvokeEvent,
-		enable: boolean
-	) {
+	private async handleConfigSetAutoStart(_event: Electron.IpcMainInvokeEvent, enable: boolean) {
 		this.configManager.setAutoStart(enable)
 	}
 
@@ -183,10 +173,7 @@ export class IPCHandlers {
 		return this.stateManager.getState()
 	}
 
-	private async handleStateSetUnreadCount(
-		_event: Electron.IpcMainInvokeEvent,
-		count: number
-	) {
+	private async handleStateSetUnreadCount(_event: Electron.IpcMainInvokeEvent, count: number) {
 		this.stateManager.setUnreadCount(count)
 	}
 
@@ -249,24 +236,15 @@ export class IPCHandlers {
 		return this.notificationManager.show(options as never)
 	}
 
-	private async handleNotificationGetHistory(
-		_event: Electron.IpcMainInvokeEvent,
-		limit?: number
-	) {
+	private async handleNotificationGetHistory(_event: Electron.IpcMainInvokeEvent, limit?: number) {
 		return this.notificationManager.getHistory(limit)
 	}
 
-	private async handleNotificationGetRecent(
-		_event: Electron.IpcMainInvokeEvent,
-		limit?: number
-	) {
+	private async handleNotificationGetRecent(_event: Electron.IpcMainInvokeEvent, limit?: number) {
 		return this.notificationManager.getRecent(limit)
 	}
 
-	private async handleNotificationGetByType(
-		_event: Electron.IpcMainInvokeEvent,
-		type: string
-	) {
+	private async handleNotificationGetByType(_event: Electron.IpcMainInvokeEvent, type: string) {
 		return this.notificationManager.getByType(type as never)
 	}
 

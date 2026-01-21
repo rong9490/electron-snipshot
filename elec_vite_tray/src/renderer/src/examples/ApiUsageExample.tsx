@@ -257,9 +257,7 @@ export function ApiUsageExample() {
 			<section style={{ marginBottom: '30px' }}>
 				<h2>状态管理</h2>
 				<p>未读消息: {unreadCount}</p>
-				{state && state.tasks && (
-					<p>任务数: {state.tasks.length}</p>
-				)}
+				{state && state.tasks && <p>任务数: {state.tasks.length}</p>}
 				<div>
 					<button onClick={incrementUnread}>增加未读数</button>
 					<button onClick={clearUnread}>清空未读数</button>
@@ -272,9 +270,7 @@ export function ApiUsageExample() {
 			<section style={{ marginBottom: '30px' }}>
 				<h2>监控控制</h2>
 				<p>状态: {isMonitoring ? '监控中' : '已停止'}</p>
-				<button onClick={toggleMonitoring}>
-					{isMonitoring ? '停止监控' : '开始监控'}
-				</button>
+				<button onClick={toggleMonitoring}>{isMonitoring ? '停止监控' : '开始监控'}</button>
 			</section>
 
 			{/* 通知部分 */}

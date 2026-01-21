@@ -4,9 +4,9 @@
  */
 
 import type { AppState, Task } from '../types'
-import { EventBus } from './EventBus'
-import { ConfigManager } from './ConfigManager'
 import { AppEvents } from '../types'
+import type { ConfigManager } from './ConfigManager'
+import type { EventBus } from './EventBus'
 
 const DEFAULT_STATE: AppState = {
 	unreadCount: 0,

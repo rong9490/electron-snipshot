@@ -13,6 +13,6 @@ import { HealthModule } from './modules/health/health.module'
 	imports: [HealthModule],
 	controllers: [],
 	providers: [],
-	exports: [],
+	exports: []
 })
 export class AppModule {}

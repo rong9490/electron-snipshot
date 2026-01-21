@@ -2,7 +2,7 @@
  * ConfigManager 单元测试
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { ConfigManager } from '../modules/ConfigManager'
 import { EventBus } from '../modules/EventBus'
 import { AppEvents } from '../types'

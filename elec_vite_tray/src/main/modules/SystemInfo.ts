@@ -14,7 +14,7 @@ export interface SystemStatus {
 	cpu: {
 		usage: number // CPU 使用率 (0-100)
 		model: string // CPU 型号
-	 cores: number // CPU 核心数
+		cores: number // CPU 核心数
 	}
 
 	// 内存信息
@@ -144,14 +144,14 @@ export class SystemInfo {
 
 		return {
 			cpu: {
-				usage: this.getCpuUsage(),
+				usage: SystemInfo.getCpuUsage(),
 				model: os.cpus()[0]?.model || 'Unknown',
 				cores: os.cpus().length
 			},
 			memory: {
-				total: this.bytesToMB(totalMem),
-				used: this.bytesToMB(usedMem),
-				free: this.bytesToMB(freeMem),
+				total: SystemInfo.bytesToMB(totalMem),
+				used: SystemInfo.bytesToMB(usedMem),
+				free: SystemInfo.bytesToMB(freeMem),
 				usage: Math.round((usedMem / totalMem) * 10000) / 100
 			},
 			system: {
@@ -167,7 +167,7 @@ export class SystemInfo {
 				nodeVersion: process.versions.node,
 				chromeVersion: process.versions.chrome,
 				uptime: Math.round(processUptime),
-				memoryUsage: this.bytesToMB(processMemory.heapUsed)
+				memoryUsage: SystemInfo.bytesToMB(processMemory.heapUsed)
 			}
 		}
 	}
@@ -282,9 +282,9 @@ export class SystemInfo {
 		}
 
 		return {
-			system: this.getSystemStatus(),
-			services: this.getServiceStatus(configManagerWithGet, stateManager),
-			ports: this.getPortInfo(),
+			system: SystemInfo.getSystemStatus(),
+			services: SystemInfo.getServiceStatus(configManagerWithGet, stateManager),
+			ports: SystemInfo.getPortInfo(),
 			timestamp: Date.now()
 		}
 	}

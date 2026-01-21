@@ -6,8 +6,8 @@
 import { app } from 'electron'
 import Store from 'electron-store'
 import type { AppConfig } from '../types'
-import { EventBus } from './EventBus'
 import { AppEvents } from '../types'
+import type { EventBus } from './EventBus'
 
 const DEFAULT_CONFIG: AppConfig = {
 	// 监控配置

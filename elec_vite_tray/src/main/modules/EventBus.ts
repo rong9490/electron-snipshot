@@ -96,12 +96,7 @@ export class EventBus {
 	 * @param retries 重试次数（默认3次）
 	 * @param delay 重试延迟（毫秒）
 	 */
-	emitWithRetry<T = any>(
-		event: string,
-		data: T,
-		retries = 3,
-		delay = 1000
-	): Promise<boolean> {
+	emitWithRetry<T = any>(event: string, data: T, retries = 3, delay = 1000): Promise<boolean> {
 		return new Promise((resolve) => {
 			const attempt = (attemptCount: number): void => {
 				try {

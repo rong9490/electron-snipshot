@@ -2,9 +2,9 @@
  * TrayManager 单元测试
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { TrayManager } from '../modules/TrayManager'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { EventBus } from '../modules/EventBus'
+import { TrayManager } from '../modules/TrayManager'
 import { AppEvents } from '../types'
 
 // Mock Electron APIs
@@ -87,12 +87,7 @@ describe('TrayManager', () => {
 		}
 
 		mockIconPath = '/mock/path/to/icon.png'
-		trayManager = new TrayManager(
-			eventBus,
-			configManager,
-			stateManager,
-			mockIconPath
-		)
+		trayManager = new TrayManager(eventBus, configManager, stateManager, mockIconPath)
 	})
 
 	afterEach(() => {
@@ -310,9 +305,7 @@ describe('TrayManager', () => {
 
 			eventBus.emit(AppEvents.UNREAD_COUNT_CHANGED)
 
-			const tooltip = mockTray.setToolTip.mock.calls[
-				mockTray.setToolTip.mock.calls.length - 1
-			][0]
+			const tooltip = mockTray.setToolTip.mock.calls[mockTray.setToolTip.mock.calls.length - 1][0]
 			expect(tooltip).toContain('5')
 			expect(tooltip).toContain('未读消息')
 		})
@@ -326,9 +319,7 @@ describe('TrayManager', () => {
 
 			eventBus.emit(AppEvents.UNREAD_COUNT_CHANGED)
 
-			const tooltip = mockTray.setToolTip.mock.calls[
-				mockTray.setToolTip.mock.calls.length - 1
-			][0]
+			const tooltip = mockTray.setToolTip.mock.calls[mockTray.setToolTip.mock.calls.length - 1][0]
 			expect(tooltip).toContain('监控中')
 		})
 	})

@@ -20,8 +20,7 @@ const api = {
 		get: (key: string) => ipcRenderer.invoke('config:get', key),
 		set: (key: string, value: unknown) => ipcRenderer.invoke('config:set', key, value),
 		getAll: () => ipcRenderer.invoke('config:get-all'),
-		setMany: (config: Record<string, unknown>) =>
-			ipcRenderer.invoke('config:set-many', config),
+		setMany: (config: Record<string, unknown>) => ipcRenderer.invoke('config:set-many', config),
 		reset: () => ipcRenderer.invoke('config:reset'),
 		setAutoStart: (enable: boolean) => ipcRenderer.invoke('config:set-auto-start', enable),
 		export: () => ipcRenderer.invoke('config:export'),
@@ -130,10 +129,10 @@ if (process.contextIsolated) {
 	}
 } else {
 	// contextIsolated 为 false 时的降级处理（实际上在现代 Electron 中不会执行）
-	// @ts-ignore - 在非隔离模式下直接挂载到 window
+	// @ts-expect-error - 在非隔离模式下直接挂载到 window
 	window.electron = electronAPI
-	// @ts-ignore
+	// @ts-expect-error
 	window.api = api
-	// @ts-ignore
+	// @ts-expect-error
 	window.ENV = environment
 }

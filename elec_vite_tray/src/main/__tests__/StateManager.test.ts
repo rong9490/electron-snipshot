@@ -2,9 +2,9 @@
  * StateManager 单元测试
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { StateManager } from '../modules/StateManager'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { EventBus } from '../modules/EventBus'
+import { StateManager } from '../modules/StateManager'
 import { AppEvents } from '../types'
 
 // Mock ConfigManager

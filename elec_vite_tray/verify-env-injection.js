@@ -132,7 +132,7 @@ if (typeof window.ENV === 'undefined') {
 }
 
 // 9. 提供全局辅助函数（可选）
-window.checkEnv = function() {
+window.checkEnv = () => {
   console.log('🌍 环境检查：')
   console.log(`  当前环境: ${window.ENV?.NODE_ENV || '未知'}`)
   console.log(`  平台: ${window.ENV?.platform || '未知'}`)
