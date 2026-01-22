@@ -1,7 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',
-  distDir: '../dist_panel',
+  // 仅在生产环境使用静态导出
+  output: process.env.NODE_ENV === 'production' ? 'export' : undefined,
+  // 仅在生产环境使用自定义输出目录
+  distDir: process.env.NODE_ENV === 'production' ? '../dist_panel' : undefined,
   images: {
     unoptimized: true
   },

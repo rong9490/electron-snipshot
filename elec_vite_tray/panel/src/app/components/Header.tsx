@@ -12,7 +12,7 @@ export default function Header() {
 
           <nav className="flex space-x-4">
             <a
-              href="/panel"
+              href="/"
               className="text-gray-700 hover:text-blue-600 transition-colors"
             >
               首页
