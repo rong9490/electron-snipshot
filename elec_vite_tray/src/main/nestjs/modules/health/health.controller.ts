@@ -5,7 +5,7 @@
 
 import { Controller, Get } from '@nestjs/common'
 import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from '@nestjs/swagger'
-import type { HealthService } from './health.service'
+import { HealthService } from './health.service'
 
 /**
  * 健康状态响应 DTO

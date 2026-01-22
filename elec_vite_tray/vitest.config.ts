@@ -8,9 +8,9 @@ export default defineConfig({
 		environment: 'node',
 		hookTimeout: 30 * 1000,
 		testTimeout: 100 * 1000,
-		setupFiles: [path.join(__dirname, './test/setup.vitest.ts')], // 预加载
+		setupFiles: ['./test/reflect-metadata.ts', path.join(__dirname, './test/setup.vitest.ts')], // 预加载
 		root: './',
-		include: ['**/__tests__/**/*.test.ts', '**/__tests__/**/*.test.tsx', '**/*.spec.ts'],
+		include: ['**/__tests__/**/*.test.ts', '**/__tests__/**/*.test.tsx', '**/*.spec.ts', '**/*.e2e-spec.ts'],
 		exclude: ['**/node_modules', '**/dist', '**/out', '**/electron'],
 		coverage: {
 			provider: 'v8',
