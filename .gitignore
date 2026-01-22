@@ -145,3 +145,4 @@ out
 .eslintcache
 *.log*
 .claude
+dist_panel
