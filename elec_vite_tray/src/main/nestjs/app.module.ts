@@ -3,9 +3,12 @@
  */
 
 import { Module } from '@nestjs/common'
+import { APP_INTERCEPTOR, APP_FILTER } from '@nestjs/core'
 import { ServeStaticModule } from '@nestjs/serve-static'
 import { join } from 'path'
 import { HealthModule } from './modules/health/health.module'
+import { LoggerModule } from './modules/logger/logger.module'
+import { LoggingInterceptor, AllExceptionsFilter } from './common'
 
 /**
  * 应用根模块
@@ -13,6 +16,9 @@ import { HealthModule } from './modules/health/health.module'
  */
 @Module({
 	imports: [
+		// 日志模块（全局）
+		LoggerModule,
+
 		// 静态文件服务 - 提供 Next.js 构建的 panel 页面
 		ServeStaticModule.forRoot({
 			rootPath: join(__dirname, '../../../dist_panel'),
@@ -22,7 +28,18 @@ import { HealthModule } from './modules/health/health.module'
 		HealthModule
 	],
 	controllers: [],
-	providers: [],
+	providers: [
+		// 全局请求日志拦截器
+		{
+			provide: APP_INTERCEPTOR,
+			useClass: LoggingInterceptor
+		},
+		// 全局异常过滤器
+		{
+			provide: APP_FILTER,
+			useClass: AllExceptionsFilter
+		}
+	],
 	exports: []
 })
 export class AppModule {}

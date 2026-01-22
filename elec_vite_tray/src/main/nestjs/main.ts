@@ -29,6 +29,9 @@ export async function createNestApp() {
 			cors: false
 		})
 
+		// 启用关闭钩子，确保优雅关闭
+		app.enableShutdownHooks()
+
 		// 手动配置 CORS
 		if (config.cors.origin) {
 			app.enableCors({

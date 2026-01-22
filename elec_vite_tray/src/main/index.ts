@@ -34,6 +34,29 @@ let notificationManager: NotificationManager | null = null
 let trayManager: TrayManager | null = null
 let ipcHandlers: IPCHandlers | null = null
 
+// 单实例锁
+const gotTheLock = app.requestSingleInstanceLock()
+
+if (!gotTheLock) {
+	console.log('[Main] Another instance is already running. Exiting...')
+	app.quit()
+} else {
+	app.on('second-instance', (_event, _commandLine, _workingDirectory) => {
+		console.log('[Main] Second instance detected, focusing existing window...')
+		// 当尝试运行第二个实例时，聚焦到已存在的窗口
+		if (mainWindow) {
+			if (mainWindow.isMinimized()) {
+				mainWindow.restore()
+			}
+			mainWindow.focus()
+		} else {
+			// 如果没有窗口，创建一个
+			createWindow()
+		}
+	})
+	console.log('[Main] ✓ Single instance lock acquired')
+}
+
 /**
  * 创建主窗口
  */
@@ -246,7 +269,8 @@ function cleanupModules(): void {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.whenReady().then(async () => {
+if (gotTheLock) {
+	app.whenReady().then(async () => {
 	// Set app user model id for windows
 	electronApp.setAppUserModelId('com.electron')
 
@@ -288,42 +312,45 @@ app.whenReady().then(async () => {
 			createWindow()
 		}
 	})
-})
+	})
+}
 
 // 所有窗口关闭时的处理
 // 注意：对于非 macOS 平台，窗口的 closed 事件中已经处理了退出逻辑
 // macOS 用户通常期望即使所有窗口关闭，应用仍在运行（直到 Cmd+Q）
-app.on('window-all-closed', () => {
-	// 在 macOS 上，通常不在此处退出应用
-	// macOS 用户习惯：关闭窗口 ≠ 退出应用，需要使用 Cmd+Q 才完全退出
-	if (process.platform !== 'darwin') {
-		// 非 macOS 平台，所有窗口关闭时退出应用
-		// 注意：由于窗口的 closed 事件已经处理了退出，这里主要是防御性代码
-		console.log('[Main] All windows closed event')
-	}
-})
+if (gotTheLock) {
+	app.on('window-all-closed', () => {
+		// 在 macOS 上，通常不在此处退出应用
+		// macOS 用户习惯：关闭窗口 ≠ 退出应用，需要使用 Cmd+Q 才完全退出
+		if (process.platform !== 'darwin') {
+			// 非 macOS 平台，所有窗口关闭时退出应用
+			// 注意：由于窗口的 closed 事件已经处理了退出，这里主要是防御性代码
+			console.log('[Main] All windows closed event')
+		}
+	})
 
-// 应用退出前清理所有资源
-app.on('before-quit', async () => {
-	console.log('[Main] Application quitting...')
-	isQuitting = true
+	// 应用退出前清理所有资源
+	app.on('before-quit', async () => {
+		console.log('[Main] Application quitting...')
+		isQuitting = true
 
-	// 发出退出事件
-	if (eventBus) {
-		eventBus.emit(AppEvents.APP_QUIT)
-	}
+		// 发出退出事件
+		if (eventBus) {
+			eventBus.emit(AppEvents.APP_QUIT)
+		}
 
-	// 🛑 关闭 NestJS 服务
-	try {
-		await shutdownNestJS()
-		console.log('[Main] ✓ NestJS service shut down')
-	} catch (error) {
-		console.error('[Main] ✗ Error shutting down NestJS:', error)
-	}
+		// 🛑 关闭 NestJS 服务
+		try {
+			await shutdownNestJS()
+			console.log('[Main] ✓ NestJS service shut down')
+		} catch (error) {
+			console.error('[Main] ✗ Error shutting down NestJS:', error)
+		}
 
-	// 清理所有模块
-	cleanupModules()
-})
+		// 清理所有模块
+		cleanupModules()
+	})
+}
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.

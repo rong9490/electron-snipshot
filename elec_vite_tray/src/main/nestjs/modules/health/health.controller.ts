@@ -3,7 +3,7 @@
  * 提供服务状态检查 API
  */
 
-import { Controller, Get } from '@nestjs/common'
+import { Controller, Get, Logger } from '@nestjs/common'
 import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { HealthService } from './health.service'
 
@@ -82,6 +82,8 @@ class DetailedInfoDto {
 @ApiTags('健康检查')
 @Controller('health')
 export class HealthController {
+	private readonly logger = new Logger(HealthController.name)
+
 	constructor(private readonly healthService: HealthService) {}
 
 	/**
@@ -96,6 +98,7 @@ export class HealthController {
 		type: HealthStatusDto
 	})
 	check(): HealthStatusDto {
+		this.logger.log('Health check requested')
 		return this.healthService.getHealthStatus()
 	}
 
@@ -111,6 +114,7 @@ export class HealthController {
 		type: DetailedInfoDto
 	})
 	getInfo(): DetailedInfoDto {
+		this.logger.log('Detailed info requested')
 		return this.healthService.getDetailedInfo()
 	}
 }
