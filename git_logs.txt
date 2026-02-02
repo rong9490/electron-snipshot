@@ -1,0 +1,168 @@
+commit b49ac9ad8bb6f5612b5aae823611e574e6142982
+Author: @hejj <hejj@tsintergy.com>
+Date:   2026-01-22 16:18:49
+
+    chore: nestjs log
+
+commit 2e8a40254fec0ee1dea16df88fbb505759214661
+Author: @hejj <hejj@tsintergy.com>
+Date:   2026-01-22 15:27:23
+
+    chore: vitest for nestjs
+
+commit 045b51cc3cb113a7ecad16b6a1c5d8e975d39d89
+Author: @hejj <hejj@tsintergy.com>
+Date:   2026-01-22 15:16:14
+
+    chore: vitest
+
+commit 229195ddac583a2099d9c8a3df6eccfdd4d1ec81
+Author: @hejj <hejj@tsintergy.com>
+Date:   2026-01-22 14:53:14
+
+    chore: nextjs初始化panel
+
+commit c28a518b1cbd7f5d1995022e924afb72f932bab1
+Author: @hejj <hejj@tsintergy.com>
+Date:   2026-01-21 16:24:51
+
+    feat: 完善 NestJS Swagger 文档和 API 测试
+    
+    - 为 Health Controller 添加完整的 Swagger 装饰器和 DTO 类
+    - 添加 @ApiTags、@ApiOperation、@ApiResponse 注解
+    - 修正 HealthService 类名并更新模块依赖
+    - 新增 API 测试脚本 (test-api.mjs) 用于验证接口
+    - 添加 NESTJS_API.md 使用文档和开发指南
+    - 应用 Biome 代码格式化
+    - 添加 test:api 命令到 package.json
+    
+    测试脚本功能：
+    - 验证健康检查接口 GET /api/health
+    - 验证详细信息接口 GET /api/health/info
+    - 检查 Swagger UI 文档可访问性
+    - 彩色输出测试结果和汇总报告
+
+commit 66626adb29371c2aa4c5c59e68b3f9926c7dba27
+Author: @hejj <hejj@tsintergy.com>
+Date:   2026-01-21 16:11:52
+
+    feat: 添加 Swagger UI 和 API 文档
+    
+    功能增强:
+    - 集成 Swagger UI 用于 API 文档展示
+    - 完善健康检查控制器的 API 文档注释
+    - 添加详细的 DTO 类型定义和文档
+    - 创建完整的 API 验证脚本
+    
+    新增文件:
+    - scripts/verify-api.sh - API 完整验证脚本
+    
+    依赖:
+    - @nestjs/swagger ^11.2.5
+    - swagger-ui-express ^5.0.0
+    
+    API 文档:
+    - 开发环境访问: http://127.0.0.1:3000/api/docs
+    - 包含完整的请求/响应示例
+    - 提供在线测试功能
+    
+    验证脚本:
+    - 健康检查测试
+    - 详细信息测试
+    - 性能测试
+    - CORS 配置验证
+    - Swagger UI 验证
+
+commit d84cc0f65d4c7a88516dfe46473e9d240f2d890f
+Author: @hejj <hejj@tsintergy.com>
+Date:   2026-01-21 16:05:30
+
+    feat: 集成 NestJS 服务到 Electron 主进程
+    
+    核心功能:
+    - 在主进程中内嵌 NestJS HTTP 服务
+    - 端口: 127.0.0.1:3000，前缀: /api
+    - 实现健康检查模块（HealthModule）
+    - 添加启动/关闭生命周期管理
+    - 配置 TypeScript 装饰器支持
+    
+    新增文件:
+    - src/main/nestjs/main.ts - NestJS 启动入口
+    - src/main/nestjs/app.module.ts - 根模块
+    - src/main/nestjs/config/ - 服务器配置
+    - src/main/nestjs/modules/health/ - 健康检查模块
+    
+    API 端点:
+    - GET /api/health - 健康检查
+    - GET /api/health/info - 系统详细信息
+    
+    文档:
+    - NESTJS_GUIDE.md - 使用指南
+    - NESTJS_INTEGRATION_DESIGN.md - 完整设计方案
+    - docs/NESTJS_QUICK_START.md - 快速开始
+    
+    依赖:
+    - @nestjs/core ^11.1.12
+    - @nestjs/common ^11.1.12
+    - @nestjs/platform-express ^11.1.12
+    - reflect-metadata ^0.2.2
+
+commit 8f94ea67b8a6b1bba6f1fe6a0136b55c4c69e2c6
+Author: @hejj <hejj@tsintergy.com>
+Date:   2026-01-21 15:40:31
+
+    feat: 托盘和打包
+
+commit c1767b8d6d8c02af45c5c62d699af52c732b5f3a
+Author: @hejj <hejj@tsintergy.com>
+Date:   2026-01-20 19:20:13
+
+    chore: windows关闭主进程退出
+
+commit 9d2e41321a5284bd45dcb3fbe0c5f912a95a90c9
+Author: @hejj <hejj@tsintergy.com>
+Date:   2026-01-20 18:51:52
+
+    feat: 向window注入环境变量
+
+commit add55eb34c3d919197bdf333a4e1adc3b7cc0ea2
+Author: @hejj <hejj@tsintergy.com>
+Date:   2026-01-20 11:25:45
+
+    feat: 完善项目配置并添加设计文档
+
+commit 390fd0f22e19f2bdb958cebffd3f8ef9140b0260
+Author: @hejj <hejj@tsintergy.com>
+Date:   2026-01-19 20:52:45
+
+    chore: env & dotenv
+
+commit 6b09ccbdfbf314f4539172854f8722a21f04ac4d
+Author: @hejj <hejj@tsintergy.com>
+Date:   2026-01-19 20:46:59
+
+    feat: vitest单元测试配置
+
+commit 026558bf7a8303a5be74cc7d7dde0fd8ea6e015a
+Author: @hejj <hejj@tsintergy.com>
+Date:   2026-01-19 20:30:39
+
+    feat: biomejs格式化; 移除eslint, prettier
+
+commit 5d4de4d204a859ab72fcf1f9de0fc35f8b80016b
+Author: @hejj <hejj@tsintergy.com>
+Date:   2026-01-19 20:19:39
+
+    chore: claude_code初步改造托盘tray模式
+
+commit 9aad59d03be167cdf3739a034fde532e6dd68360
+Author: @hejj <hejj@tsintergy.com>
+Date:   2026-01-19 20:10:04
+
+    chore: init elec_vite_tray
+
+commit 42c5ec37ceb427bdca2662c61cb3da8e8614de25
+Author: 阿荣 <949034746@qq.com>
+Date:   2026-01-19 20:05:10
+
+    Initial commit
