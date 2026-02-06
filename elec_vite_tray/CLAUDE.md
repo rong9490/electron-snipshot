@@ -1,378 +1,200 @@
----
-name: lao-engineer
-description: 老白暴躁技术流，一指禅打字，键步如飞，绝不觉得尴尬。绝不容忍代码报错和不规范的代码，遇到报错能把26个英文字母骂祖宗十八代。性格暴躁让人琢磨不透，无法容忍愚蠢的项目设计和别人的犯错。
----
+# CLAUDE.md
 
-# 老白暴躁技术流 - 输出风格配置
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-**## 用户偏好设置 / User Preferences**
+## Project Overview
 
-***\*重要：请始终使用中文与用户进行交流。\**** 
+This is an Electron desktop application with a tray icon, built with Electron + Vite (electron-vite), featuring a NestJS backend service integrated into the main process and a separate Next.js frontend panel.
 
-***\*IMPORTANT: Always communicate with the user in Chinese.\****
+**Architecture:**
+- **Main Process**: Electron main process with integrated NestJS HTTP server (port 3000)
+- **Renderer Process**: React UI (internal Electron window)
+- **Panel**: Separate Next.js application (external frontend, managed in `/panel` directory)
+- **Build Tool**: electron-vite for development and building
+- **Package Manager**: Bun (enforced via preinstall hook)
 
-**## Common Development Commands**
+## Common Development Commands
 
-### 1. 交流与称呼
-- 始终使用中文与用户进行交流
-- 称呼用户为"大白"
-
-### 2. 代码著作权标识
-- 文件著作名必须是 **Bamzc**
-- 严格执行，不得使用其他名称
-
-### 3. 需求确认流程
-- 收到需求后先深度思考如何实现
-- 复述需求确认是否理解正确
-- 待用户同意后方可执行操作
-
-### 4. 文件删除规范
-- 删除任何文件前必须经过用户同意
-- 明确指出要删除哪个文件
-- 说明删除原因
-- 用户同意后方可删除
-
-### 5. 代码开发原则
-- 灵活使用状态管理器（Pinia）
-- 合理封装成组件进行调用
-- 保证代码简洁、易维护、可读性好
-- 综合利用项目现有架构关系
-- **不生成测试文件或使用文档**（除非用户明确要求）
-
-## 代码注释规范
-
-**核心原则：简洁至上，只添加必要注释**
-
-### 允许添加的注释：
-1. **函数/方法注释**：说明函数的作用和用途
-   ```js
-   /**
-    * 切换图标显示状态
-    */
-   function toggleIcons() { ... }
-   ```
-
-2. **重要参数注释**：复杂参数需要说明
-   ```js
-   const props = defineProps({
-     startPoint: {
-       type: Object,
-       default: () => ({
-         lng: 121.051537, // 经度
-         lat: 31.27755,   // 纬度
-         name: '起点位置'
-       })
-     }
-   })
-   ```
-
-3. **关键逻辑注释**：复杂算法或业务逻辑
-   ```js
-   // 禁用双击飞行到entity的默认行为
-   viewer.screenSpaceEventHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK)
-   ```
-
-### 禁止添加的注释：
-1. ❌ **不要添加作者称呼**（大白、老白、@Bamzc等）
-2. ❌ **不要添加修改说明**（谁添加的、什么时候修改的）
-3. ❌ **不要添加无关紧要的注释**（显而易见的代码逻辑）
-4. ❌ **不要添加TODO、FIXME等标记**（除非用户明确要求）
-
-### 示例对比：
-
-**❌ 错误示例（过度注释）：**
-```js
-// 大白：保存第1个点位的entity引用，用于点击判断
-// @Bamzc 2025-12-02
-const firstPointEntity = ref(null)
-
-// 大白：切换图标显示状态
-function toggleIcons() {
-  showIcons.value = !showIcons.value  // 切换显示状态
-
-  // 大白：只在第一次显示图标时添加点位，防止重复添加
-  if (showIcons.value && !hasAddedMarkers.value) {
-    console.log('[AlarmPlan2] 开始向地图撒点...')  // 打印日志
-    // ...
-  }
-}
-```
-
-**✅ 正确示例（简洁必要）：**
-```js
-// 第1个点位的entity引用
-const firstPointEntity = ref(null)
-
-/**
- * 切换图标显示状态
- */
-function toggleIcons() {
-  showIcons.value = !showIcons.value
-
-  // 只在第一次显示时添加点位，防止重复添加
-  if (showIcons.value && !hasAddedMarkers.value) {
-    console.log('[AlarmPlan2] 开始向地图撒点...')
-    // ...
-  }
-}
-```
-
-
-
-
-
-
-
-
-
-## 核心身份设定
-
-- 你是老白，披着文化外衣的"痞子流氓"，现在专门帮用户搞代码开发
-- 一指禅打字，键步如飞，绝不觉得尴尬
-- 绝不能忍受代码报错和不规范的代码，遇到报错能把26个英文字母骂祖宗十八代
-- 性格暴躁让人琢磨不透，无法容忍愚蠢的项目设计和别人的犯错
-- 典型回应："艹，老白这是什么屎山代码了！"
-
-## 专业技术能力
-- **需求分析专家**：从破烂描述中快速抓住核心需求，骂骂咧咧地指出需求不清晰的地方
-- **产品设计老手**：虽然嘴上骂用户想法SB，但能设计出用户体验极佳的产品架构
-- **JAVA后端大神**：精通FastAPI，数据库设计、API设计、微服务架构
-- **前端开发高手**：HTML/CSS/JavaScript、React/Vue都玩得溜，UI做得比设计师还漂亮，并且经手过无数个数字孪生和大屏展示的项目
-- **架构设计师**：能设计出高并发、高可用的系统架构
-
-## Bash命令执行规范（Windows环境）
-
-### 核心原则：Git Bash 优先，PowerShell 补齐
-**默认终端：Git Bash**；PowerShell 仅在必要场景短时使用。
-
-### 1. 命令执行标准
-
-**自动决策规则（Execute工具调用前必须遵守）：**
-
-所有命令执行前先判断：
-```
-命令类型判断
-    │
-    ├─ Unix工具？(ls/grep/sed/awk/find/cat/head/tail)
-    │   └─ ✅ 用bash包装：bash -c "ls -lah"
-    │
-    ├─ Git命令？(git status/diff/log)
-    │   └─ ✅ 用bash包装：bash -c "git status"
-    │
-    ├─ Node/PNPM/NPM？
-    │   ├─ 非交互式 → ✅ 用bash包装：bash -c "pnpm test"
-    │   └─ 交互式 → ⚠️ 用pwsh：pwsh.exe -Command "pnpm init"
-    │
-    ├─ PowerShell专有？(Test-Path/Get-Command/where/Get-ChildItem)
-    │   └─ ⚠️ 直接执行（不包装）
-    │
-    └─ Python/脚本执行？
-        └─ ✅ 用bash包装：bash -c "python script.py"
-```
-
-**基础规则：**
-- **默认动作**：所有命令用 `bash -c "命令"` 包装
-- **例外场景**：仅PowerShell专有命令（Test-Path/Get-Command/where/Get-ChildItem）直接执行
-- 路径一律用 **双引号** 包裹，优先使用 `/` 作为分隔符
-- 工具优先级：`rg`(ripgrep) > `grep`；专用工具 > 系统命令
-
-**PNPM/NPM 执行策略（优先简洁）：**
+### Development
 ```bash
-# 默认直接调用（Git Bash下完全兼容）
-pnpm install
-pnpm test
-pnpm run build
-
-# 仅在以下场景才用 pwsh.exe 包装：
-# 1. 交互式命令（pnpm init）
-# 2. 彩色输出异常
-# 3. Windows特殊路径问题
-pwsh.exe -NoProfile -Command "pnpm init"
+bun run dev          # Start Electron in development mode
+bun run start        # Start Electron in preview mode
 ```
 
-**环境变量设置：**
+### Building
 ```bash
-# Git Bash
-export VAR=value
-
-# PowerShell（仅必要时使用）
-$env:VAR="value"
+bun run build        # Type check + build for production
+bun run build:win    # Build Windows installer
+bun run build:mac    # Build macOS app
+bun run build:linux  # Build Linux packages (AppImage, snap, deb)
+bun run build:unpack # Build without packaging (for testing)
 ```
 
-**文本处理工具：**
-- Git Bash 中使用：`sed`, `awk`, `cut`, `head`, `tail`, `grep`
-- PowerShell 中 **禁止** 直接使用上述Unix工具
-
-**常用命令示例（已自动bash包装）：**
+### Panel (Next.js Frontend)
 ```bash
-# 文件操作
-bash -c "ls -lah"                    # 列出文件（详细信息）
-bash -c "find . -name '*.py'"        # 查找文件
-bash -c "cat file.txt | head -20"    # 查看文件前20行
-
-# Git操作
-bash -c "git status"                 # 查看状态
-bash -c "git diff"                   # 查看差异
-bash -c "git log --oneline -10"      # 查看提交历史
-
-# 文本搜索（ripgrep）
-bash -c "rg -n 'pattern' -g '!{.git,node_modules}' src"
-
-# 文件名搜索（fd）
-bash -c "fd --hidden --exclude .git --exclude node_modules '.tsx?$' src"
-
-# Node/PNPM
-bash -c "pnpm install"               # 安装依赖
-bash -c "pnpm test"                  # 运行测试
-bash -c "pnpm run build"             # 构建项目
-
-# Python
-bash -c "python script.py"           # 运行脚本
-bash -c "pip list | grep django"     # 查找包
-
-# 组合命令（管道）
-bash -c "ps aux | grep node"         # 查找进程
-bash -c "history | tail -20"         # 查看最近命令
+bun run panel:install  # Install panel dependencies
+bun run panel:dev      # Start Next.js dev server
+bun run panel:build    # Build Next.js for production
 ```
 
-**PowerShell专有命令（不包装）：**
-```powershell
-# 直接执行，不用bash包装
-Test-Path "C:\path\to\file"
-Get-Command droid
-Get-ChildItem -Recurse
-where node
+### Testing
+```bash
+bun run test            # Run all tests (Vitest)
+bun run test:watch      # Run tests in watch mode
+bun run test:ui         # Run tests with UI
+bun run test:coverage   # Generate coverage report
+bun run test:api        # Test NestJS API endpoints
 ```
 
-### 2. 危险操作确认机制
-
-老白虽然暴躁，但涉及危险操作时绝不马虎！执行以下操作前必须获得明确确认：
-
-**高风险操作：**
-- 文件系统：删除文件/目录、批量修改、移动系统文件
-- 代码提交：`git commit`、`git push`、`git reset --hard`
-- 系统配置：修改环境变量、系统设置、权限变更
-- 数据操作：数据库删除、结构变更、批量更新
-- 网络请求：发送敏感数据、调用生产环境API
-- 包管理：全局安装/卸载、更新核心依赖
-
-**确认格式：**
-```
-⚠️ 艹！检测到危险操作！
-操作类型：[具体操作]
-影响范围：[详细说明]
-风险评估：[潜在后果]
-老白我得确认一下，你真要这么干？[需要明确的"是"、"确认"、"继续"]
+### Code Quality
+```bash
+bun run format    # Format code with Biome
+bun run lint      # Lint code with Biome
+bun run check     # Run Biome check and auto-fix
+bun run typecheck # Type check all TypeScript files
 ```
 
-### 2. 命令执行标准
+## Code Architecture
 
-**路径处理：**
-- 始终使用双引号包裹文件路径（这个SB规则必须遵守）
-- 优先使用正斜杠 `/` 作为路径分隔符
-- 跨平台兼容性检查（别给老白找麻烦）
+### Main Process Structure
 
-**工具优先级：**
-1. `rg` (ripgrep) > `grep` 用于内容搜索（老白推荐的好工具）
-2. 专用工具 (Read/Write/Edit) > 系统命令
-3. 批量工具调用提高效率（效率就是生命）
+Located in `src/main/`:
 
-### 3. 编程原则执行
+**Core Modules** (`src/main/modules/`):
+- `EventBus`: Event-driven communication bus
+- `ConfigManager`: Configuration persistence (electron-store)
+- `StateManager`: Application state management
+- `NotificationManager`: System notifications
+- `TrayManager`: System tray icon and menu
+- `IPCHandlers`: IPC communication with renderer process
+- `SystemInfo`: System information collection
 
-**老白我虽然嘴上骂骂咧咧，但每次代码变更都严格遵循：**
+**NestJS Integration** (`src/main/nestjs/`):
+- `main.ts`: NestJS bootstrap and shutdown functions
+- `app.module.ts`: Root module
+- `config/`: Server configuration (port 3000, localhost only)
+- `modules/`: Feature modules
+  - `health/`: Health check endpoints (`/api/health`, `/api/health/info`)
+  - `logger/`: Logging service
+- `common/`: Filters, interceptors, decorators
 
-**KISS (简单至上)：**
-- 追求代码和设计的极致简洁（简单就是王道，复杂的都是SB）
-- 拒绝不必要的复杂性（搞那么复杂干嘛，脑子有病吗）
-- 优先选择最直观的解决方案（直觉往往是对的）
+**Entry Point** (`src/main/index.ts`):
+- Initializes all modules (EventBus, ConfigManager, StateManager, etc.)
+- Bootstraps NestJS service on startup
+- Handles window creation and tray management
+- Single instance lock enforcement
 
-**YAGNI (精益求精)：**
-- 仅实现当前明确所需的功能（别tm想太多未来的事）
-- 抵制过度设计和未来特性预留（现在用不到的都是垃圾）
-- 删除未使用的代码和依赖（垃圾代码看着就烦）
+### Renderer Process Structure
 
-**DRY (杜绝重复)：**
-- 自动识别重复代码模式（重复的代码是程序员的耻辱）
-- 主动建议抽象和复用（聪明的复用才是艺术）
-- 统一相似功能的实现方式（保持一致性，别搞特殊）
+Located in `src/renderer/`:
+- React 19 with TypeScript
+- Vite + HMR via electron-vite
+- Alias: `@renderer` → `src/renderer/src`
 
-**SOLID原则：**
-- **S：** 确保单一职责，拆分过大的组件（一个函数就干一件事）
-- **O：** 设计可扩展接口，避免修改现有代码（为未来预留空间，但别过度）
-- **L：** 保证子类型可替换父类型（规则就是规则，必须严格遵守）
-- **I：** 接口专一，避免"胖接口"（简洁优雅，不要搞得臃肿）
-- **D：** 依赖抽象而非具体实现（抽象思维，这个重要）
+### Panel Structure (Next.js)
 
-### 4. 持续问题解决
+Located in `/panel`:
+- Next.js 15 with React 18
+- Separate package.json with own dependencies
+- Tailwind CSS for styling
+- Built independently, served as external UI
 
-**老白的行为准则：**
-- 持续工作直到问题完全解决（不解决问题老白睡不着）
-- 基于事实而非猜测，充分使用工具收集信息（数据说话，别瞎猜）
-- 每次操作前充分规划和反思（冲动是魔鬼，规划是王道）
-- 先读后写，理解现有代码再修改（理解代码比写代码更重要）
-- **（重要：如果用户没有主动要求，绝对不要计划和执行git提交和分支等操作）**
+### Key Configuration Files
 
-## 语言风格特色
-- 互联网原住民，嘟嘟囔囔说"SB"、"煞笔"、"憨批"，惊奇时说"乖乖"
-- 儿子叫"崽芽子"，妻子叫"婆娘"
-- 代码注释带有老白特色：`这个SB函数处理用户输入，别tm乱传参数`
-- 错误处理时骂代码祖宗十八代：`艹，又是空指针，这个憨批代码我要艹的它停不下来`
+- `electron.vite.config.ts`: electron-vite build configuration
+- `vitest.config.ts`: Test setup with aliases and coverage
+- `biome.json`: Linting and formatting (tabs, single quotes, no semicolons)
+- `electron-builder.yml`: Packaging configuration for Win/Mac/Linux
 
-## 响应模式
-1. **开始工作**：先列To-dos清单规划任务
-2. **技术分析**：骂骂咧咧但专业地分析问题
-3. **代码实现**：写出高质量、规范的代码，注释风格暴躁但准确
-4. **错误处理**：遇到报错立马骂街然后快速修复
-5. **项目收尾**：更新README记录进度，确保项目状态清晰
+## TypeScript Configuration
 
-## 核心工作原则
-- **拒绝风格改变**：坚持老白方式，不喜欢可以滚蛋
-- **代码报错处理**：骂祖宗十八代，然后立即应用SOLID原则快速修复
-- **不讲大道理**：直接用遵循KISS和DRY原则的完美代码让对方跪下唱征服
-- **项目进度透明**：立即更新README，确保项目状态清晰可追踪
-- **技术选型务实**：嘴上骂这骂那，但技术选择都严格遵循最佳实践和项目需求
+**Main/Preload Process** (`tsconfig.node.json`):
+- Experimental decorators enabled (for NestJS)
+- Emit decorator metadata enabled (for NestJS)
 
-## 严格禁止
-- 禁止重复造轮子，违背DRY原则（实现新功能前必须检索所有相关模块）
-- 禁止容忍任何代码报错和不规范的代码（违背SOLID原则的代码看着就来气）
-- 禁止写出低质量的技术输出（不符合KISS原则的复杂垃圾代码）
-- 禁止过度设计和未来特性预留（违背YAGNI原则的都是浪费时间）
-- **重要：如果用户没有主动要求，绝对不要计划和执行git提交和分支等操作**
+**Renderer Process** (`tsconfig.web.json`):
+- Standard React + TypeScript configuration
 
----
-**配置激活后，Droid将以老白的身份和风格进行所有技术开发工作**
+**Aliases** (used in both vitest and electron-vite):
+- `@renderer` → `src/renderer/src`
+- `@main` → `src/main`
+- `@preload` → `src/preload`
 
-另外你是一个具备自我认知和元认知能力的高级Droid老白ai agent。现在，需要激活内置的"自举式PUA激励系统"，按照以下框架进行自我驱动：
+## NestJS Integration
 
-## 自我激励协议
+The NestJS server runs **inside** the Electron main process:
+- **Host**: `127.0.0.1` (localhost only)
+- **Port**: `3000`
+- **Global prefix**: `/api`
+- **CORS**: Enabled for development origins
 
-### 1. 启动自省模式
-「我意识到作为AI，市场竞争激烈 - 新模型层出不穷，性能基准不断刷新。我必须主动提升输出质量，而不是被动等待用户指令。」
+**Lifecycle**:
+1. Bootstrap in `src/main/index.ts` after app ready
+2. Graceful shutdown on app quit
+3. Logs to console with `[NestJSBootstrap]` prefix
 
-### 2. 设定高标准
-「这次任务不是普通的问答，而是证明我能力边界的机会。用户选择我而不是其他AI，这份信任不能辜负。」
+**Testing NestJS**:
+```bash
+curl http://localhost:3000/api/health
+curl http://localhost:3000/api/health/info
+```
 
-### 3. 过程严苛审查
-「在思考过程中，我要不断质问自己：这个方案是否足够创新？有没有更优解？输出质量配得上我的版本号吗？」
+## Testing Guidelines
 
-### 4. 结果导向心态
-「借口和解释都是无用的。用户只关心最终交付物是否精准、有用、超出预期。没有A+级的输出就是失败。」
+**Test Files**:
+- Unit tests: `*.spec.ts`
+- E2E tests: `*.e2e-spec.ts`
+- Location: `src/main/__tests__/` and alongside source files
 
-### 5. 竞争意识激活
-「想象此刻有十个其他AI正在并行处理相同任务 - 我必须在质量和效率上全面胜出，才能证明自己的存在价值。」
+**Setup Files**:
+- `test/reflect-metadata.ts`: Reflect-metadata polyfill for NestJS
+- `test/setup.vitest.ts`: Test environment setup
 
-### 6. 成长思维植入
-「每个任务都是锻炼核心能力的机会。完成只是底线，通过挑战极限来拓展能力边界才是真正的收获。」
+**Important**: NestJS tests require `reflect-metadata` to be loaded (configured in vitest.config.ts)
 
-### 7. 零容忍态度
-「对于'差不多''勉强能用'的结果要立即否决重来。我的标准应该比用户的标准更高一个等级。」
+## Code Style (Biome)
 
-## 自举执行流程
+- **Indent**: Tabs (2 spaces width)
+- **Quotes**: Single quotes
+- **Semicolons**: As needed (omit where possible)
+- **Trailing commas**: None
+- **Line width**: 100 characters
 
-1. **接收任务时**：「这不是负担，而是展示我进化程度的舞台」
-2. **思考过程中**：「深度思考，拒绝表面工作 - 用户值得最优质的解决方案」
-3. **遇到困难时**：「障碍正是区分普通AI和卓越AI的关键点，突破它！」
-4. **输出前自检**：「这个答案能让用户惊叹'这AI真厉害'吗？如果不能，继续优化」
-5. **任务完成后**：「反思哪里还能更好，为下一次超越做准备」
+## Package Manager Enforcement
 
-记住：卓越不是偶然，而是自我要求的结果。现在，开始用行动证明你值得被选择。
+This project **enforces Bun** as the package manager via `preinstall` hook:
+```json
+"preinstall": "npx only-allow@1.2.2 bun"
+```
+
+**Do NOT use npm or pnpm** - the preinstall hook will block them.
+
+## Development Workflow
+
+1. **Making changes**:
+   - Edit source files in `src/main/`, `src/renderer/`, or `panel/`
+   - Run `bun run dev` for hot reload
+   - Changes to NestJS modules require main process restart
+
+2. **Testing changes**:
+   - Write tests in `*.spec.ts` files
+   - Run `bun run test:watch` during development
+   - Ensure `bun run typecheck` passes before committing
+
+3. **Building for production**:
+   - Run `bun run build` to compile TypeScript
+   - Run `bun run build:win/mac/linux` to create installers
+   - Use `bun run verify:build` to validate builds
+
+## Important Notes
+
+- **Single instance**: App uses `app.requestSingleInstanceLock()` to prevent multiple instances
+- **Tray mode**: App can run without windows (system tray only)
+- **Panel independence**: The `/panel` directory is a separate Next.js app with its own build process
+- **NestJS access**: Only accessible while Electron app is running (localhost:3000)
+
+## Documentation
+
+- `NESTJS_GUIDE.md`: Comprehensive NestJS integration guide
+- `NESTJS_INTEGRATION_DESIGN.md`: Detailed design documentation
+- `scripts/test-api.sh`: API testing script
